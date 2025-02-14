@@ -1,10 +1,9 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Play, Check} from "lucide-react"
+import { Play, Check } from "lucide-react"
 import { useState } from "react"
-import Select, { components } from "react-select";
-
+import Select, { components } from "react-select"
 
 interface Movie {
   id: number
@@ -19,12 +18,9 @@ interface SidebarProps {
   onMovieSelect: (movie: Movie) => void
 }
 
-export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies, onMovieSelect}: SidebarProps) {
-  // Estado correcto para manejar la categoría seleccionada
-  const [category, setCategory] = useState<"popular" | "top_rated" | "upcoming">("popular");
-
-  // Estado correcto para manejar la opción seleccionada en el select
-  const [selectedOption, setSelectedOption] = useState<{ label: string; value: "popular" | "top_rated" | "upcoming" } | null>(null);
+export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies, onMovieSelect }: SidebarProps) {
+  const [category, setCategory] = useState<"popular" | "top_rated" | "upcoming">("popular")
+  const [selectedOption, setSelectedOption] = useState<{ label: string; value: "popular" | "top_rated" | "upcoming" } | null>(null)
 
   const movies = {
     popular: popularMovies,
@@ -36,40 +32,26 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
     { label: "Populares", value: "popular" },
     { label: "Top", value: "top_rated" },
     { label: "Upcoming", value: "upcoming" }
-  ];
+  ]
 
   return (
-    <div
-      className="
-        fixed 
-        top-28
-        right-10
-        w-64
-        h-[80vh]
-        bg-black bg-opacity-0
-        rounded-lg
-        overflow-y-auto
-        p-6
-        font-bebas-neue
-        z-50
-      "
-    >
+    <div className="fixed top-28 right-10 w-64 h-[80vh] bg-black bg-opacity-0 rounded-lg overflow-y-auto p-6 font-bebas-neue z-50">
       {/* Encabezado */}
       <div className="mb-4">
         <Select
           options={options}
-          value={selectedOption} 
+          value={selectedOption}
           onChange={(selected) => {
-            setSelectedOption(selected); // Guarda la opción seleccionada en el estado
-            setCategory(selected?.value || "popular"); // Actualiza la categoría de películas
+            setSelectedOption(selected)
+            setCategory(selected?.value || "popular")
           }}
           placeholder="Escoge una opción"
-          getOptionLabel={(e) => e.label} 
+          getOptionLabel={(e) => e.label}
           formatOptionLabel={(data, { context }) =>
             context === "menu" ? (
               <div className="flex justify-between items-center w-full">
                 <span className="font-book tracking-[0.3em]">{data.label}</span>
-                {selectedOption?.value === data.value && <Check className="w-5 h-5 text-white" />} 
+                {selectedOption?.value === data.value && <Check className="w-5 h-5 text-white" />}
               </div>
             ) : (
               <span className="text-lg font-bold">
@@ -77,7 +59,6 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
                 {data.label}
               </span>
             )
-
           }
           className="text-white tracking-[0.2em] flex justify-center items-center"
           menuPortalTarget={document.body}
@@ -105,10 +86,10 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
               backgroundColor: "transparent",
               color: "white",
               border: "none",
-              boxShadow: "none", 
+              boxShadow: "none",
               display: "flex",
               alignItems: "center",
-              padding: "4px 8px", 
+              padding: "4px 8px",
               width: "100%",
               cursor: "pointer"
             }),
@@ -121,19 +102,19 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
               padding: "10px 20px",
               position: "absolute",
               width: "241px",
-              "::before": {
-                backgroundColor:"transparent",
-                content: '""',
-                position: "absolute",
-                top: "-10px",
-                right: "28px",
-                transform: "translateX(-50%)",
-                width: "0",
-                height: "0",
-                borderLeft: "10px solid transparent",
-                borderRight: "10px solid transparent",
-                borderBottom: "10px solid #242424",
-              },
+                "::before": {
+                  backgroundColor:"transparent",
+                  content: '""',
+                  position: "absolute",
+                  top: "-10px",
+                  right: "28px",
+                  transform: "translateX(-50%)",
+                  width: "0",
+                  height: "0",
+                  borderLeft: "10px solid transparent",
+                  borderRight: "10px solid transparent",
+                  borderBottom: "10px solid #242424",
+                },
             }),
             menuPortal: (base) => ({
               ...base,
@@ -158,14 +139,14 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
             }),
             dropdownIndicator: (base) => ({
               ...base,
-              padding: "0", // Elimina espacio innecesario
-              marginLeft: "-14px", // Mueve la flecha más cerca del texto
+              padding: "0",
+              marginLeft: "-14px",
               color: "white",
               ":hover": { color: "white" },
               ":focus": { color: "white" },
               ":active": { color: "white" },
             }),
-            indicatorSeparator: () => ({ // Elimina la barra separadora
+            indicatorSeparator: () => ({
               display: "none",
             }),
             indicatorsContainer: (base) => ({
@@ -183,25 +164,41 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
       <div className="space-y-6">
         {movies[category] && movies[category].length > 0 ? (
           movies[category].map((movie) => (
-            <motion.div key={movie.id} whileHover={{ scale: 1.05 }} className="relative group cursor-pointer" onClick={() => onMovieSelect(movie)}>
-              <div className="aspect-video bg-gray-800 rounded-lg overflow-hidden">
+            <motion.div
+              key={movie.id}
+              whileHover={{ scale: 1.05 }}
+              className="relative group cursor-pointer"
+              onClick={() => onMovieSelect(movie)}
+            >
+              {/* 🔹 Nueva estructura de MovieCard */}
+              <div className="relative aspect-video bg-gray-800 rounded-lg overflow-hidden flex items-end justify-center">
+                {/* Imagen de la película */}
                 <img
                   src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
                   alt={movie.title}
-                  className="w-full h-full object-cover"
+                  className="w-full h-full object-cover transition-opacity duration-300 ease-in-out"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-black bg-opacity-50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <Play className="w-12 h-12" />
-                </div>
+
+                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+
+                {/*  Ícono de Play SIEMPRE visible, pero cambia de color en hover */}
+                <motion.div
+                  className="absolute inset-0 flex items-center justify-center"
+                  whileHover={{ scale: 1.1 }}
+                >
+                  <Play className="w-12 h-12 text-white group-hover:text-primary transition-colors duration-300" />
+                </motion.div>
+
+                {/*  Título de la película sobre la imagen */}
+                <h3 className="absolute text-md font-regular text-white font-bebas-neue tracking-widest leading-tight bottom-1">
+                  {movie.title}
+                </h3>
               </div>
-              <h3 className="mt-2 text-sm font-medium text-white text-shadow font-bebas-neue">
-                {movie.title}
-              </h3>
             </motion.div>
           ))
         ) : (
-          <p className="text-white">No hay películas disponibles.</p> 
+          <p className="text-white">No hay películas disponibles.</p>
         )}
       </div>
     </div>
