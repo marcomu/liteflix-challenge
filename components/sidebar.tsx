@@ -3,7 +3,7 @@
 import { motion } from "framer-motion"
 import { Play, Check} from "lucide-react"
 import { useState } from "react"
-import Select from "react-select";
+import Select, { components } from "react-select";
 
 
 interface Movie {
@@ -81,6 +81,23 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies 
           className="text-white tracking-[0.2em] flex justify-center items-center"
           menuPortalTarget={document.body}
           menuPosition="absolute"
+          components={{
+            Menu: (props) => (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }} 
+                exit={{ opacity: 0, y: -10 }} 
+                transition={{
+                  type: "spring",
+                  stiffness: 200,
+                  damping: 15,
+                }}
+                className="absolute z-50 w-full bg-transparent rounded-lg p-2"
+              >
+                <components.Menu {...props} />
+              </motion.div>
+            ),
+          }}
           styles={{
             control: (base) => ({
               ...base,
@@ -103,10 +120,11 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies 
               position: "absolute",
               width: "241px",
               "::before": {
+                backgroundColor:"transparent",
                 content: '""',
                 position: "absolute",
                 top: "-10px",
-                right: "5%",
+                right: "28px",
                 transform: "translateX(-50%)",
                 width: "0",
                 height: "0",
@@ -117,11 +135,11 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies 
             }),
             menuPortal: (base) => ({
               ...base,
-              zIndex: 99999, // ✅ Ahora el menú estará por encima de todo
+              zIndex: 99999,
             }),
             option: (base, state) => ({
               ...base,
-              backgroundColor: "#242424",
+              backgroundColor: "transparent",
               color: "white",
               cursor: "pointer",
               width: "100%",
