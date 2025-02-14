@@ -2,16 +2,23 @@
     "name": "liteflix",
     "version": "1.0.0",
     "private": true,
+    "type": "module",
     "scripts": {
-      "dev": "next dev",
-      "build": "next build",
-      "start": "next start"
+        "dev": "next dev",
+        "build": "next build",
+        "start": "next start"
     },
     "dependencies": {
-      "next": "latest",
-      "react": "latest",
-      "react-dom": "latest",
-      "tailwindcss": "^3.2.4"
+        "framer-motion": "^12.4.2",
+        "lucide-react": "^0.475.0",
+        "next": "latest",
+        "react": "latest",
+        "react-dom": "latest",
+        "tailwindcss": "^3.2.4"
+    },
+    "devDependencies": {
+        "@types/node": "22.13.4",
+        "@types/react": "19.0.8",
+        "typescript": "5.7.3"
     }
-  }
-  
+}
