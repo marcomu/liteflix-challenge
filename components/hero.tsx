@@ -48,7 +48,7 @@ export default function Hero({ movie, refreshTrigger, setRefreshTrigger, toggleB
               transition={{ delay: 0.2 }}
               className="mb-4"
             >
-              <p className="text-xl tracking-widest mb-2 font-bebas-neue leading-none">
+              <p className="text-xl tracking-[.25em] mb-2 font-bebas-neue leading-none">
                 <span className="font-book">ORIGINAL DE </span>
                 <span className="font-bold">LITEFLIX</span>
               </p>
@@ -63,7 +63,7 @@ export default function Hero({ movie, refreshTrigger, setRefreshTrigger, toggleB
             >
               <button
                 type="button"
-                className="text-lg btn-primary flex items-center tracking-[.25em] gap-2 font-bebas-neue"
+                className="text-lg btn-primary flex items-center justify-center tracking-[.25em] gap-2 h-14 w-[248px] text-center font-bebas-neue"
                 aria-label="Reproducir"
               >
                 <Play className="w-4 h-4" />
@@ -71,7 +71,7 @@ export default function Hero({ movie, refreshTrigger, setRefreshTrigger, toggleB
               </button>
               <button
                 type="button"
-                className="text-lg btn-secondary flex items-center tracking-[.25em] gap-2 font-bebas-neue"
+                className="text-lg btn-secondary flex items-center justify-center tracking-[.25em] h-14 w-[248px] gap-2 font-bebas-neue"
                 onClick={handleToggleBottomBar}
                 aria-label="Mostrar mi lista"
               >

@@ -56,7 +56,7 @@ const config: Config = {
         },
         // Colores originales para referencia o uso específico
         "primary-original": "#4FE2C8",
-        "secondary-original": "#242424",
+        "secondary-original": "#242424"
       },
       borderRadius: {
         lg: "var(--radius)",

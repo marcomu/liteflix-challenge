@@ -57,11 +57,11 @@
   }
 
   .btn-primary {
-    @apply bg-primary text-black px-6 py-2 hover:bg-opacity-90 transition-opacity;
+    @apply bg-secondary-original text-white px-6 py-2 hover:bg-opacity-90 transition-opacity;
   }
 
   .btn-secondary {
-    @apply border border-white px-6 py-2 hover:bg-white hover:text-black transition-colors;
+    @apply border border-gray-600 px-6 py-2 bg-secondary-original bg-opacity-50 hover:bg-opacity-90 hover:text-white transition-colors;
   }
 }
 
