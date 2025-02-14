@@ -17,7 +17,7 @@ const config: Config = {
   theme: {
     extend: {
       fontFamily: {
-        "bebas-neue": ["var(--font-bebas-neue)", "sans-serif"],
+        "bebas-neue": ["Bebas Neue", "sans-serif"],
       },
       colors: {
         // Colores definidos a partir de variables CSS para mayor flexibilidad
