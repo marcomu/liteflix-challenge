@@ -1,7 +1,7 @@
 "use client"
 
 import { motion } from "framer-motion"
-import { Play } from "lucide-react"
+import { Play, Check} from "lucide-react"
 import { useState } from "react"
 import Select from "react-select";
 
@@ -57,16 +57,19 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies 
       <div className="mb-4">
         <Select
           options={options}
-          value={selectedOption} // ✅ Ahora el valor seleccionado se mantiene
+          value={selectedOption} 
           onChange={(selected) => {
             setSelectedOption(selected); // Guarda la opción seleccionada en el estado
             setCategory(selected?.value || "popular"); // Actualiza la categoría de películas
           }}
           placeholder="Escoge una opción"
-          getOptionLabel={(e) => e.label} // ✅ Muestra solo "Populares", "Top", "Upcoming" en el menú
+          getOptionLabel={(e) => e.label} 
           formatOptionLabel={(data, { context }) =>
             context === "menu" ? (
-              data.label // 🔹 En el menú, solo muestra "Populares", "Top", "Upcoming"
+              <div className="flex justify-between items-center w-full">
+                <span className="font-book tracking-[0.3em]">{data.label}</span>
+                {selectedOption?.value === data.value && <Check className="w-5 h-5 text-white" />} 
+              </div>
             ) : (
               <span className="text-lg font-bold">
                 <span className="font-bebas-neue font-medium">Ver: </span>
@@ -76,6 +79,8 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies 
 
           }
           className="text-white tracking-[0.2em] flex justify-center items-center"
+          menuPortalTarget={document.body}
+          menuPosition="absolute"
           styles={{
             control: (base) => ({
               ...base,
@@ -85,7 +90,6 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies 
               boxShadow: "none", 
               display: "flex",
               alignItems: "center",
-              gap: "4px", 
               padding: "4px 8px", 
               width: "100%",
             }),
@@ -96,20 +100,24 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies 
               border: "none",
               color: "white",
               padding: "10px 20px",
-              top: "30px",
-              position: "relative", // ✅ Necesario para el triángulo
+              position: "absolute",
+              width: "241px",
               "::before": {
                 content: '""',
                 position: "absolute",
-                top: "-10px", // 📌 Posición del triángulo
-                left: "50%",
+                top: "-10px",
+                right: "5%",
                 transform: "translateX(-50%)",
                 width: "0",
                 height: "0",
                 borderLeft: "10px solid transparent",
                 borderRight: "10px solid transparent",
-                borderBottom: "10px solid #242424", // 📌 Color del triángulo igual al menú
+                borderBottom: "10px solid #242424",
               },
+            }),
+            menuPortal: (base) => ({
+              ...base,
+              zIndex: 99999, // ✅ Ahora el menú estará por encima de todo
             }),
             option: (base, state) => ({
               ...base,
@@ -130,14 +138,14 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies 
             }),
             dropdownIndicator: (base) => ({
               ...base,
-              padding: "0", // 📌 Elimina espacio innecesario
-              marginLeft: "-14px", // 📌 Mueve la flecha más cerca del texto
+              padding: "0", // Elimina espacio innecesario
+              marginLeft: "-14px", // Mueve la flecha más cerca del texto
               color: "white",
               ":hover": { color: "white" },
               ":focus": { color: "white" },
               ":active": { color: "white" },
             }),
-            indicatorSeparator: () => ({ // ❌ Elimina la barra separadora
+            indicatorSeparator: () => ({ // Elimina la barra separadora
               display: "none",
             }),
             indicatorsContainer: (base) => ({
