@@ -6,10 +6,10 @@ import Hero from "@/components/hero"
 import Sidebar from "@/components/sidebar"
 import BottomBar from "@/components/BottomBar"
 
-const THE_MOVE_APIKEY = process.env.THE_MOVE_APIKEY
+const NEXT_PUBLIC_TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY
 
 async function getMovies(category: string) {
-  const res = await fetch(`https://api.themoviedb.org/3/movie/${category}?api_key=${THE_MOVE_APIKEY}`)
+  const res = await fetch(`https://api.themoviedb.org/3/movie/${category}?api_key=${NEXT_PUBLIC_TMDB_API_KEY}`)
   if (!res.ok) {
     throw new Error("Failed to fetch data")
   }

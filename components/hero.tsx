@@ -1,32 +1,87 @@
-"use client";
+"use client"
 
-import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { useState, useRef } from "react"
+import { motion } from "framer-motion"
+import { Play, Plus } from "lucide-react"
+import AddMovieModal from "./AddMovieModal"
+import type React from "react"
 
 interface Movie {
-  title: string;
-  backdrop_path: string;
+  title: string
+  backdrop_path: string
 }
 
-export default function Hero({ movie }: { movie: Movie }) {
-  const [isClient, setIsClient] = useState(false);
+interface HeroProps {
+  movie: Movie
+  refreshTrigger: number
+  setRefreshTrigger: React.Dispatch<React.SetStateAction<number>>
+  toggleBottomBar: () => void
+}
 
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
+export default function Hero({ movie, refreshTrigger, setRefreshTrigger, toggleBottomBar }: HeroProps) {
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const contentRef = useRef<HTMLDivElement>(null)
+  const handleMovieAdded = () => {
+    setRefreshTrigger((prev) => prev + 1)
+  }
 
-  if (!isClient) return <p className="text-white">Cargando...</p>;
+  const handleToggleBottomBar = () => {
+    toggleBottomBar()
+  }
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative h-screen">
-      <div
-        className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})` }}
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
-      <div className="absolute bottom-16 left-16">
-        <h1 className="text-5xl font-bold text-primary">{movie.title}</h1>
+    <>
+      <div className="relative h-screen" ref={contentRef}>
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full relative">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: `url(https://image.tmdb.org/t/p/original${movie.backdrop_path})`,
+            }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
+
+          <div className="absolute bottom-52 left-16 z-10 transition-all duration-300">
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="mb-4"
+            >
+              <p className="text-sm mb-2 font-bebas-neue">ORIGINAL DE LITEFLIX</p>
+              <h1 className="text-7xl font-bold text-primary font-bebas-neue">{movie.title}</h1>
+            </motion.div>
+
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4 }}
+              className="flex gap-4"
+            >
+              <button
+                type="button"
+                className="btn-primary flex items-center gap-2 font-bebas-neue"
+                aria-label="Reproducir"
+              >
+                <Play className="w-4 h-4" />
+                REPRODUCIR
+              </button>
+              <button
+                type="button"
+                className="btn-secondary flex items-center gap-2 font-bebas-neue"
+                onClick={handleToggleBottomBar}
+                aria-label="Mostrar mi lista"
+              >
+                <Plus className="w-4 h-4" />
+                MI LISTA
+              </button>
+            </motion.div>
+          </div>
+        </motion.div>
       </div>
-    </motion.div>
-  );
+
+      <AddMovieModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onMovieAdded={handleMovieAdded} />
+    </>
+  )
 }
+
