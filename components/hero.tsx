@@ -41,15 +41,18 @@ export default function Hero({ movie, refreshTrigger, setRefreshTrigger, toggleB
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
 
-          <div className="absolute bottom-52 left-16 z-10 transition-all duration-300">
+          <div className="absolute bottom-64 left-16 z-10 transition-all duration-300">
             <motion.div
               initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
               className="mb-4"
             >
-              <p className="text-sm mb-2 font-bebas-neue">ORIGINAL DE LITEFLIX</p>
-              <h1 className="text-7xl font-bold text-primary font-bebas-neue">{movie.title}</h1>
+              <p className="text-xl tracking-widest mb-2 font-bebas-neue leading-none">
+                <span className="font-book">ORIGINAL DE </span>
+                <span className="font-bold">LITEFLIX</span>
+              </p>
+              <h1 className="text-[120px] font-bold tracking-widest text-primary leading-none font-bebas-neue">{movie.title}</h1>
             </motion.div>
 
             <motion.div
@@ -60,20 +63,20 @@ export default function Hero({ movie, refreshTrigger, setRefreshTrigger, toggleB
             >
               <button
                 type="button"
-                className="btn-primary flex items-center gap-2 font-bebas-neue"
+                className="text-lg btn-primary flex items-center tracking-[.25em] gap-2 font-bebas-neue"
                 aria-label="Reproducir"
               >
                 <Play className="w-4 h-4" />
-                REPRODUCIR
+                <span className="leading-[0]">REPRODUCIR</span>
               </button>
               <button
                 type="button"
-                className="btn-secondary flex items-center gap-2 font-bebas-neue"
+                className="text-lg btn-secondary flex items-center tracking-[.25em] gap-2 font-bebas-neue"
                 onClick={handleToggleBottomBar}
                 aria-label="Mostrar mi lista"
               >
                 <Plus className="w-4 h-4" />
-                MI LISTA
+                <span className="leading-[0]">MI LISTA</span>
               </button>
             </motion.div>
           </div>

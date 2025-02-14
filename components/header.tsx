@@ -27,7 +27,7 @@ export default function Header({ onMovieAdded }: HeaderProps) {
       <motion.header
         initial={{ y: -100 }}
         animate={{ y: 0 }}
-        className="fixed w-full z-40 px-8 py-4 h-20 flex items-center justify-between bg-black bg-opacity-0"
+        className="fixed w-full z-40 px-20 py-16 h-20 flex items-center justify-between bg-black bg-opacity-0"
       >
         <div className="flex items-center gap-8">
           <Link href="/" className="text-primary text-4xl tracking-[.15em] font-bebas-neue">
