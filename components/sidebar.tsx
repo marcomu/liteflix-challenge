@@ -29,12 +29,11 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies 
     <div
       className="
         fixed 
-        top-10
+        top-28
         right-10
         w-64
         h-[80vh]
-        bg-black bg-opacity-60
-        backdrop-blur-sm
+        bg-black bg-opacity-0
         rounded-lg
         overflow-y-auto
         p-6
