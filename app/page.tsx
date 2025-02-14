@@ -8,6 +8,13 @@ import BottomBar from "@/components/BottomBar"
 
 const NEXT_PUBLIC_TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY
 
+interface Movie {
+  id: number;
+  title: string;
+  backdrop_path: string;
+  poster_path: string;
+}
+
 async function getMovies(category: string) {
   const res = await fetch(`https://api.themoviedb.org/3/movie/${category}?api_key=${NEXT_PUBLIC_TMDB_API_KEY}`)
   if (!res.ok) {
@@ -16,7 +23,9 @@ async function getMovies(category: string) {
   return res.json()
 }
 
+
 export default function HomePage() {
+  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
   const [popularMovies, setPopularMovies] = useState<any>(null)
   const [topRatedMovies, setTopRatedMovies] = useState<any>(null)
   const [upcomingMovies, setUpcomingMovies] = useState<any>(null)
@@ -43,6 +52,10 @@ export default function HomePage() {
     setRefreshTrigger((prev) => prev + 1)
   }
 
+  const handleMovieSelect = (movie: Movie) => {
+    setSelectedMovie(movie);
+  };
+
   if (!popularMovies || !topRatedMovies || !upcomingMovies) {
     return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>
   }
@@ -53,7 +66,7 @@ export default function HomePage() {
       <div className="flex h-full">
         <div className="flex-grow">
           <Hero
-            movie={popularMovies.results[0]}
+            movie={selectedMovie || popularMovies.results[0]}
             refreshTrigger={refreshTrigger}
             setRefreshTrigger={setRefreshTrigger}
             toggleBottomBar={() => setIsBottomBarVisible((prev) => !prev)}
@@ -63,6 +76,7 @@ export default function HomePage() {
           popularMovies={popularMovies.results.slice(0, 4)}
           topRatedMovies={topRatedMovies.results.slice(0, 4)}
           upcomingMovies={upcomingMovies.results.slice(0, 4)}
+          onMovieSelect={handleMovieSelect} 
         />
       </div>
       <BottomBar isVisible={isBottomBarVisible} refreshTrigger={refreshTrigger} />

@@ -32,7 +32,7 @@ export default function Header({ onMovieAdded }: HeaderProps) {
         <div className="flex items-center gap-8">
           <Link href="/" className="text-primary text-4xl tracking-[.15em] font-bebas-neue">
             <span className="font-bold">LITE</span>
-            <span className="font-book">FLIX</span>
+            <span className="font-medium">FLIX</span>
           </Link>
           <button
             type="button"

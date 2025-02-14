@@ -16,9 +16,10 @@ interface SidebarProps {
   popularMovies: Movie[]
   topRatedMovies: Movie[]
   upcomingMovies: Movie[]
+  onMovieSelect: (movie: Movie) => void
 }
 
-export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies }: SidebarProps) {
+export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies, onMovieSelect}: SidebarProps) {
   // Estado correcto para manejar la categoría seleccionada
   const [category, setCategory] = useState<"popular" | "top_rated" | "upcoming">("popular");
 
@@ -109,6 +110,7 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies 
               alignItems: "center",
               padding: "4px 8px", 
               width: "100%",
+              cursor: "pointer"
             }),
             menu: (base) => ({
               ...base,
@@ -181,7 +183,7 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies 
       <div className="space-y-6">
         {movies[category] && movies[category].length > 0 ? (
           movies[category].map((movie) => (
-            <motion.div key={movie.id} whileHover={{ scale: 1.05 }} className="relative group">
+            <motion.div key={movie.id} whileHover={{ scale: 1.05 }} className="relative group cursor-pointer" onClick={() => onMovieSelect(movie)}>
               <div className="aspect-video bg-gray-800 rounded-lg overflow-hidden">
                 <img
                   src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
