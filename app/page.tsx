@@ -6,8 +6,6 @@ import Hero from "@/components/hero"
 import Sidebar from "@/components/sidebar"
 import BottomBar from "@/components/BottomBar"
 
-const NEXT_PUBLIC_TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY
-
 interface Movie {
   id: number;
   title: string;
@@ -16,7 +14,7 @@ interface Movie {
 }
 
 async function getMovies(category: string) {
-  const res = await fetch(`https://api.themoviedb.org/3/movie/${category}?api_key=${NEXT_PUBLIC_TMDB_API_KEY}`)
+  const res = await fetch(`https://api.themoviedb.org/3/movie/${category}?api_key=6f26fd536dd6192ec8a57e94141f8b20`)
   if (!res.ok) {
     throw new Error("Failed to fetch data")
   }
