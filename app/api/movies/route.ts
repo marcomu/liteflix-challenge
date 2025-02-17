@@ -33,9 +33,16 @@ export async function GET(request: Request) {
     return NextResponse.json(data)
   } catch (error) {
     console.error("Error al obtener películas de Airtable:", error)
+
+    // Verifica que `error` sea una instancia de Error antes de acceder a `.message`
+    const errorMessage = error instanceof Error ? error.message : "Error desconocido";
+
     return NextResponse.json(
-      { error: "No se pudieron obtener las películas de Airtable", details: error.message },
+    
+      { error: "No se pudieron obtener las películas de Airtable", details: errorMessage },
+    
       { status: 500 },
+    
     )
   }
 }
@@ -97,6 +104,7 @@ export async function POST(request: Request) {
     if (!airtableResponse.ok) {
       const errorText = await airtableResponse.text()
       console.error("Error al insertar el registro en Airtable:", errorText)
+
       return NextResponse.json(
         { error: "Error al insertar el registro en Airtable", details: errorText },
         { status: airtableResponse.status },
@@ -108,8 +116,10 @@ export async function POST(request: Request) {
     return NextResponse.json(data)
   } catch (error) {
     console.error("Error al agregar la película a Airtable:", error)
+    const errorMessage = error instanceof Error ? error.message : "Error desconocido";
+
     return NextResponse.json(
-      { error: "No se pudo agregar la película a Airtable", details: error.message },
+      { error: "No se pudo agregar la película a Airtable", details: errorMessage },
       { status: 500 },
     )
   }
