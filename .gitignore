@@ -40,3 +40,5 @@ coverage/
 ###  Archivos de Cloudinary y Airtable (si los generas en local)
 cloudinary-upload.log
 airtable-backup.json
+.vercel
+.env*.local

@@ -1,12 +1,8 @@
 import { NextResponse } from "next/server"
 
 const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY
-const CLOUDINARY_UPLOAD_URL = process.env.CLOUDINARY_UPLOAD_URL
-const CLOUDINARY_UPLOAD_PRESET = process.env.CLOUDINARY_UPLOAD_PRESET
+const CLOUDINARY_NAME = process.env.CLOUDINARY_NAME
 
-
-console.log(`${process.env.NEXT_PUBLIC_AIRTABLE_API_KEY} prueba de qe existe`)
-console.log(`${AIRTABLE_API_KEY} prueba de qe existe`)
 /*
  * Método GET: Obtiene las películas desde Airtable.
  */
@@ -64,9 +60,9 @@ export async function POST(request: Request) {
     // Subir imagen a Cloudinary
     const cloudinaryFormData = new FormData()
     cloudinaryFormData.append("file", poster, poster.name)
-    cloudinaryFormData.append("upload_preset", CLOUDINARY_UPLOAD_PRESET)
+    cloudinaryFormData.append("upload_preset", "default")
 
-    const cloudinaryResponse = await fetch(CLOUDINARY_UPLOAD_URL, {
+    const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_NAME}/image/upload`, {
       method: "POST",
       body: cloudinaryFormData,
     })
