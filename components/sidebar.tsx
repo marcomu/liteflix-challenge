@@ -8,6 +8,7 @@ import Select, { components } from "react-select"
 interface Movie {
   id: number
   title: string
+  backdrop_path: string
   poster_path: string
 }
 

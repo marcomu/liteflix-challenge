@@ -7,10 +7,10 @@ import Sidebar from "@/components/sidebar"
 import BottomBar from "@/components/BottomBar"
 
 interface Movie {
-  id: number;
-  title: string;
-  backdrop_path: string;
-  poster_path: string;
+  id: number
+  title: string
+  backdrop_path: string
+  poster_path: string
 }
 
 async function getMovies(category: string) {
@@ -74,7 +74,7 @@ export default function HomePage() {
           popularMovies={popularMovies.results.slice(0, 4)}
           topRatedMovies={topRatedMovies.results.slice(0, 4)}
           upcomingMovies={upcomingMovies.results.slice(0, 4)}
-          onMovieSelect={handleMovieSelect} 
+          onMovieSelect={(movie) => handleMovieSelect(movie)}
         />
       </div>
       <BottomBar isVisible={isBottomBarVisible} refreshTrigger={refreshTrigger} />
