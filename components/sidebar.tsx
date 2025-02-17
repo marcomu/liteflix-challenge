@@ -29,20 +29,40 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
     upcoming: upcomingMovies,
   }
 
-  const options = [
+  const options: { label: string; value: "popular" | "top_rated" | "upcoming" }[] = [
     { label: "Populares", value: "popular" },
     { label: "Top", value: "top_rated" },
     { label: "Upcoming", value: "upcoming" }
   ]
 
+
+  const CustomMenu = (props: any) => {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -10 }}
+        transition={{
+          type: "spring",
+          stiffness: 200,
+          damping: 15,
+        }}
+        className="absolute z-50 w-full bg-transparent rounded-lg p-2"
+      >
+        <components.Menu {...props}>{props.children}</components.Menu>
+      </motion.div>
+    )
+  }
+
   return (
     <div className="fixed top-28 right-10 w-64 h-[80vh] bg-black bg-opacity-0 rounded-lg overflow-y-auto p-6 font-bebas-neue z-50">
-      {/* Encabezado */}
+      
+      {/* Select Dropdown con el nuevo CustomMenu */}
       <div className="mb-4">
         <Select
           options={options}
           value={selectedOption}
-          onChange={(selected) => {
+          onChange={(selected: { label: string; value: "popular" | "top_rated" | "upcoming" } | null) => {
             setSelectedOption(selected)
             setCategory(selected?.value || "popular")
           }}
@@ -65,21 +85,8 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
           menuPortalTarget={document.body}
           menuPosition="absolute"
           components={{
-            Menu: (props) => (
-              <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }} 
-                exit={{ opacity: 0, y: -10 }} 
-                transition={{
-                  type: "spring",
-                  stiffness: 200,
-                  damping: 15,
-                }}
-                className="absolute z-50 w-full bg-transparent rounded-lg p-2"
-              >
-                <components.Menu {...props} />
-              </motion.div>
-            ),
+
+            Menu: CustomMenu
           }}
           styles={{
             control: (base) => ({
@@ -103,19 +110,19 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
               padding: "10px 20px",
               position: "absolute",
               width: "241px",
-                "::before": {
-                  backgroundColor:"transparent",
-                  content: '""',
-                  position: "absolute",
-                  top: "-10px",
-                  right: "28px",
-                  transform: "translateX(-50%)",
-                  width: "0",
-                  height: "0",
-                  borderLeft: "10px solid transparent",
-                  borderRight: "10px solid transparent",
-                  borderBottom: "10px solid #242424",
-                },
+              "::before": {
+                backgroundColor:"transparent",
+                content: '""',
+                position: "absolute",
+                top: "-10px",
+                right: "28px",
+                transform: "translateX(-50%)",
+                width: "0",
+                height: "0",
+                borderLeft: "10px solid transparent",
+                borderRight: "10px solid transparent",
+                borderBottom: "10px solid #242424",
+              },
             }),
             menuPortal: (base) => ({
               ...base,
@@ -171,7 +178,7 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
               className="relative group cursor-pointer"
               onClick={() => onMovieSelect(movie)}
             >
-              {/* 🔹 Nueva estructura de MovieCard */}
+              {/* Nueva estructura de MovieCard */}
               <div className="relative aspect-video bg-gray-800 rounded-lg overflow-hidden flex items-end justify-center">
                 {/* Imagen de la película */}
                 <img
