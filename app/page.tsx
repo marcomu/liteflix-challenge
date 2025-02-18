@@ -4,7 +4,6 @@ import { useState, useEffect } from "react"
 import Header from "@/components/header"
 import Hero from "@/components/hero"
 import Sidebar from "@/components/sidebar"
-import BottomBar from "@/components/BottomBar"
 
 interface Movie {
   id: number
@@ -28,7 +27,6 @@ export default function HomePage() {
   const [topRatedMovies, setTopRatedMovies] = useState<any>(null)
   const [upcomingMovies, setUpcomingMovies] = useState<any>(null)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
-  const [isBottomBarVisible, setIsBottomBarVisible] = useState(false)
 
   useEffect(() => {
     async function fetchMovies() {
@@ -67,7 +65,6 @@ export default function HomePage() {
             movie={selectedMovie || popularMovies.results[0]}
             refreshTrigger={refreshTrigger}
             setRefreshTrigger={setRefreshTrigger}
-            toggleBottomBar={() => setIsBottomBarVisible((prev) => !prev)}
           />
         </div>
         <Sidebar
@@ -77,7 +74,6 @@ export default function HomePage() {
           onMovieSelect={(movie) => handleMovieSelect(movie)}
         />
       </div>
-      <BottomBar isVisible={isBottomBarVisible} refreshTrigger={refreshTrigger} />
     </div>
   )
 }
