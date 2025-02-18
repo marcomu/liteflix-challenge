@@ -12,7 +12,11 @@ interface Movie {
   poster_path: string
 }
 
-async function getMovies(category: string) {
+interface MovieResponse {
+  results: Movie[]
+}
+
+async function getMovies(category: string): Promise<MovieResponse> {
   const res = await fetch(`https://api.themoviedb.org/3/movie/${category}?api_key=6f26fd536dd6192ec8a57e94141f8b20`)
   if (!res.ok) {
     throw new Error("Failed to fetch data")
@@ -20,12 +24,11 @@ async function getMovies(category: string) {
   return res.json()
 }
 
-
 export default function HomePage() {
   const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
-  const [popularMovies, setPopularMovies] = useState<any>(null)
-  const [topRatedMovies, setTopRatedMovies] = useState<any>(null)
-  const [upcomingMovies, setUpcomingMovies] = useState<any>(null)
+  const [popularMovies, setPopularMovies] = useState<MovieResponse | null>(null)
+  const [topRatedMovies, setTopRatedMovies] = useState<MovieResponse | null>(null)
+  const [upcomingMovies, setUpcomingMovies] = useState<MovieResponse | null>(null)
   const [refreshTrigger, setRefreshTrigger] = useState(0)
 
   useEffect(() => {
@@ -49,11 +52,15 @@ export default function HomePage() {
   }
 
   const handleMovieSelect = (movie: Movie) => {
-    setSelectedMovie(movie);
-  };
+    setSelectedMovie(movie)
+  }
 
   if (!popularMovies || !topRatedMovies || !upcomingMovies) {
-    return <div className="min-h-screen flex items-center justify-center text-white">Loading...</div>
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Loading...
+      </div>
+    )
   }
 
   return (
@@ -77,4 +84,3 @@ export default function HomePage() {
     </div>
   )
 }
-
