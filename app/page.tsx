@@ -5,15 +5,25 @@ import Header from "@/components/header"
 import Hero from "@/components/hero"
 import Sidebar from "@/components/sidebar"
 
-interface Movie {
+interface TMDBMovie {
   id: number
   title: string
   backdrop_path: string
   poster_path: string
 }
 
+interface AirtableMovie {
+  id: string
+  fields: {
+    movie_name: string
+    poster_url?: string
+  }
+}
+
+type MovieType = TMDBMovie | AirtableMovie
+
 interface MovieResponse {
-  results: Movie[]
+  results: TMDBMovie[]
 }
 
 async function getMovies(category: string): Promise<MovieResponse> {
@@ -25,7 +35,7 @@ async function getMovies(category: string): Promise<MovieResponse> {
 }
 
 export default function HomePage() {
-  const [selectedMovie, setSelectedMovie] = useState<Movie | null>(null)
+  const [selectedMovie, setSelectedMovie] = useState<TMDBMovie | null>(null)
   const [popularMovies, setPopularMovies] = useState<MovieResponse | null>(null)
   const [topRatedMovies, setTopRatedMovies] = useState<MovieResponse | null>(null)
   const [upcomingMovies, setUpcomingMovies] = useState<MovieResponse | null>(null)
@@ -48,11 +58,22 @@ export default function HomePage() {
   }, [])
 
   const handleMovieAdded = () => {
-    setRefreshTrigger((prev) => prev + 1)
+    setRefreshTrigger(prev => prev + 1)
   }
 
-  const handleMovieSelect = (movie: Movie) => {
-    setSelectedMovie(movie)
+  const handleMovieSelect = (movie: MovieType) => {
+    if ("fields" in movie) {
+      // Convertir AirtableMovie a TMDBMovie
+      const convertedMovie: TMDBMovie = {
+        id: Number(movie.id),
+        title: movie.fields.movie_name,
+        backdrop_path: "", // Puedes asignar un valor placeholder si lo deseas
+        poster_path: movie.fields.poster_url || "",
+      }
+      setSelectedMovie(convertedMovie)
+    } else {
+      setSelectedMovie(movie)
+    }
   }
 
   if (!popularMovies || !topRatedMovies || !upcomingMovies) {
