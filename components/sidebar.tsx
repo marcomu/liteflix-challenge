@@ -130,10 +130,10 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
               scale: hovered ? 0.8 : 1,
             }}
             transition={{ duration: 0.3 }}
-            className={`absolute bottom-8 left-0 right-0 transition-all duration-300 ${
+            className={`absolute transition-all duration-300 ${
               hovered
-                ? "flex flex-row items-center justify-center gap-2"
-                : "grid grid-rows-2 gap-1 text-center"
+                ? "flex-row flex items-center justify-center bottom-10 left-[-5px]"
+                : "grid-rows-2 gap-1 text-center flex items-center justify-center bottom-5 left-0 right-0"
             }`}
           >
             <CirclePlay
@@ -156,16 +156,16 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
           </motion.div>
 
           {/* Rating */}
-          <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="absolute bottom-2 left-2 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="flex items-center">
               <Star className="w-4 h-4 fill-[#64eebc] text-[#64eebc]" />
-              <span className="ml-1 text-white text-sm">5.0</span>
+              <span className="ml-1 text-white text-sm mt-1 tracking-widest">5.0</span>
             </div>
           </div>
 
           {/* Año */}
           <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-            <span className="text-white text-sm">2020</span>
+            <span className="text-white text-sm tracking-widest">2020</span>
           </div>
         </div>
       </motion.div>
