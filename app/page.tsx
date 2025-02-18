@@ -20,7 +20,7 @@ interface AirtableMovie {
   }
 }
 
-type MovieType = TMDBMovie | AirtableMovie
+export type MovieType = TMDBMovie | AirtableMovie
 
 interface MovieResponse {
   results: TMDBMovie[]
@@ -35,7 +35,8 @@ async function getMovies(category: string): Promise<MovieResponse> {
 }
 
 export default function HomePage() {
-  const [selectedMovie, setSelectedMovie] = useState<TMDBMovie | null>(null)
+  // Ahora el estado acepta MovieType
+  const [selectedMovie, setSelectedMovie] = useState<MovieType | null>(null)
   const [popularMovies, setPopularMovies] = useState<MovieResponse | null>(null)
   const [topRatedMovies, setTopRatedMovies] = useState<MovieResponse | null>(null)
   const [upcomingMovies, setUpcomingMovies] = useState<MovieResponse | null>(null)
@@ -58,22 +59,11 @@ export default function HomePage() {
   }, [])
 
   const handleMovieAdded = () => {
-    setRefreshTrigger(prev => prev + 1)
+    setRefreshTrigger((prev) => prev + 1)
   }
 
   const handleMovieSelect = (movie: MovieType) => {
-    if ("fields" in movie) {
-      // Convertir AirtableMovie a TMDBMovie
-      const convertedMovie: TMDBMovie = {
-        id: Number(movie.id),
-        title: movie.fields.movie_name,
-        backdrop_path: "", // Puedes asignar un valor placeholder si lo deseas
-        poster_path: movie.fields.poster_url || "",
-      }
-      setSelectedMovie(convertedMovie)
-    } else {
-      setSelectedMovie(movie)
-    }
+    setSelectedMovie(movie)
   }
 
   if (!popularMovies || !topRatedMovies || !upcomingMovies) {
