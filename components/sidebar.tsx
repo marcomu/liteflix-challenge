@@ -2,10 +2,19 @@
 
 import { motion } from "framer-motion"
 import { Play, Check } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import Select, { components } from "react-select"
 
-interface Movie {
+// Nueva interfaz para las películas de Airtable
+interface AirtableMovie {
+  id: string
+  fields: {
+    movie_name: string
+    poster_url?: string
+  }
+}
+
+interface TMDBMovie {
   id: number
   title: string
   backdrop_path: string
@@ -13,28 +22,61 @@ interface Movie {
 }
 
 interface SidebarProps {
-  popularMovies: Movie[]
-  topRatedMovies: Movie[]
-  upcomingMovies: Movie[]
-  onMovieSelect: (movie: Movie) => void
+  popularMovies: TMDBMovie[]
+  topRatedMovies: TMDBMovie[]
+  upcomingMovies: TMDBMovie[]
+  onMovieSelect: (movie: TMDBMovie | AirtableMovie) => void
 }
 
 export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies, onMovieSelect }: SidebarProps) {
-  const [category, setCategory] = useState<"popular" | "top_rated" | "upcoming">("popular")
-  const [selectedOption, setSelectedOption] = useState<{ label: string; value: "popular" | "top_rated" | "upcoming" } | null>(null)
+  const [category, setCategory] = useState<"popular" | "top_rated" | "upcoming" | "mymovies">("popular")
+  const [selectedOption, setSelectedOption] = useState<{ label: string; value: "popular" | "top_rated" | "upcoming" | "mymovies" } | null>(null)
 
   const movies = {
     popular: popularMovies,
     top_rated: topRatedMovies,
-    upcoming: upcomingMovies,
+    upcoming: upcomingMovies
   }
 
-  const options: { label: string; value: "popular" | "top_rated" | "upcoming" }[] = [
+  const options: { label: string; value: "popular" | "top_rated" | "upcoming" | "mymovies"}[] = [
     { label: "Populares", value: "popular" },
     { label: "Top", value: "top_rated" },
-    { label: "Upcoming", value: "upcoming" }
+    { label: "Upcoming", value: "upcoming" },
+    { label: "Mis Películas", value: "mymovies" }
   ]
 
+  // Estados para "Mis Películas" (datos de Airtable)
+  const [myMovies, setMyMovies] = useState<AirtableMovie[]>([])
+  const [isLoadingMyMovies, setIsLoadingMyMovies] = useState(false)
+
+  // Función para obtener "Mis Películas" desde Airtable (API)
+  const fetchMyMovies = useCallback(async () => {
+    setIsLoadingMyMovies(true)
+    try {
+      const response = await fetch("/api/movies")
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`)
+      }
+      const data = await response.json()
+      setMyMovies(data.records || [])
+    } catch (error) {
+      console.error("Error fetching my movies:", error)
+      setMyMovies([])
+    } finally {
+      setIsLoadingMyMovies(false)
+    }
+  }, [])
+
+  // useEffect para cargar "Mis Películas" al seleccionar esa categoría
+  useEffect(() => {
+    if (category === "mymovies") {
+      fetchMyMovies()
+    }
+  }, [category, fetchMyMovies])
+
+  // Definir qué películas mostrar y el estado de carga según la categoría
+  const displayMovies = category === "mymovies" ? myMovies : movies[category]
+  const loading = category === "mymovies" ? isLoadingMyMovies : false
 
   const CustomMenu = (props: any) => {
     return (
@@ -62,7 +104,7 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
         <Select
           options={options}
           value={selectedOption}
-          onChange={(selected: { label: string; value: "popular" | "top_rated" | "upcoming" } | null) => {
+          onChange={(selected: { label: string; value: "popular" | "top_rated" | "upcoming" | "mymovies" } | null) => {
             setSelectedOption(selected)
             setCategory(selected?.value || "popular")
           }}
@@ -85,7 +127,6 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
           menuPortalTarget={document.body}
           menuPosition="absolute"
           components={{
-
             Menu: CustomMenu
           }}
           styles={{
@@ -170,43 +211,55 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
 
       {/* Lista de películas */}
       <div className="space-y-6">
-        {movies[category] && movies[category].length > 0 ? (
-          movies[category].map((movie) => (
-            <motion.div
-              key={movie.id}
-              whileHover={{ scale: 1.05 }}
-              className="relative group cursor-pointer"
-              onClick={() => onMovieSelect(movie)}
-            >
-              {/* Nueva estructura de MovieCard */}
-              <div className="relative aspect-video bg-gray-800 rounded-lg overflow-hidden flex items-end justify-center">
-                {/* Imagen de la película */}
-                <img
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                  alt={movie.title}
-                  className="w-full h-full object-cover transition-opacity duration-300 ease-in-out"
-                  loading="lazy"
-                />
-
-                <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-
-                {/*  Ícono de Play SIEMPRE visible, pero cambia de color en hover */}
-                <motion.div
-                  className="absolute inset-0 flex items-center justify-center"
-                  whileHover={{ scale: 1.1 }}
-                >
-                  <Play className="w-12 h-12 text-white group-hover:text-primary transition-colors duration-300" />
-                </motion.div>
-
-                {/*  Título de la película sobre la imagen */}
-                <h3 className="absolute text-md font-regular text-white font-bebas-neue tracking-widest leading-tight bottom-1">
-                  {movie.title}
-                </h3>
-              </div>
-            </motion.div>
-          ))
+        {loading ? ( // 🚀🛠️ Mostrar spinner si se están cargando "Mis Películas"
+          <div className="flex justify-center items-center h-32">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#64eebc]"></div>
+          </div>
         ) : (
-          <p className="text-white">No hay películas disponibles.</p>
+          <>
+            {displayMovies && displayMovies.length > 0 ? ( // 🚀🛠️ Usar displayMovies en función de la categoría seleccionada
+              displayMovies.map((movie: any) => (
+                <motion.div
+                  key={movie.id}
+                  whileHover={{ scale: 1.05 }}
+                  className="relative group cursor-pointer"
+                  onClick={() => onMovieSelect(movie)}
+                >
+                  {/* 🚀🛠️ Renderizado condicional para diferenciar datos de Airtable vs. TMDB */}
+                  <div className="relative aspect-video bg-gray-800 rounded-lg overflow-hidden flex items-end justify-center">
+                    {/* Imagen de la película */}
+                    <img
+                      src={
+                        category === "mymovies"
+                          ? movie.fields.poster_url || "/placeholder.svg?height=169&width=300"
+                          : `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                      }
+                      alt={category === "mymovies" ? movie.fields.movie_name : movie.title}
+                      className="w-full h-full object-cover transition-opacity duration-300 ease-in-out"
+                      loading="lazy"
+                    />
+
+                    <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+
+                    {/* Ícono de Play siempre visible, cambia de color en hover */}
+                    <motion.div
+                      className="absolute inset-0 flex items-center justify-center"
+                      whileHover={{ scale: 1.1 }}
+                    >
+                      <Play className="w-12 h-12 text-white group-hover:text-primary transition-colors duration-300" />
+                    </motion.div>
+
+                    {/* 🚀🛠️ Se modificó la clase para centrar el texto */}
+                    <h3 className="absolute bottom-1 left-0 right-0 text-center text-md font-regular text-white font-bebas-neue tracking-widest leading-tight">
+                      {category === "mymovies" ? movie.fields.movie_name : movie.title}
+                    </h3>
+                  </div>
+                </motion.div>
+              ))
+            ) : (
+              <p className="text-white text-center">No hay películas disponibles.</p>
+            )}
+          </>
         )}
       </div>
     </div>

@@ -6,10 +6,20 @@ import { Play, Plus } from "lucide-react"
 import AddMovieModal from "./AddMovieModal"
 import type React from "react"
 
-interface Movie {
+// Se definen dos interfaces para soportar ambos tipos de movie
+interface TMDBMovie {
   title: string
   backdrop_path: string
 }
+
+interface AirtableMovie {
+  fields: {
+    movie_name: string
+    poster_url?: string
+  }
+}
+
+type Movie = TMDBMovie | AirtableMovie
 
 interface HeroProps {
   movie: Movie
@@ -21,14 +31,24 @@ interface HeroProps {
 export default function Hero({ movie, refreshTrigger, setRefreshTrigger, toggleBottomBar }: HeroProps) {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const contentRef = useRef<HTMLDivElement>(null)
-  const [image, setImage] = useState(movie.backdrop_path);
+  
+  // Determinar la imagen de fondo y el título según el tipo de movie
+  const backgroundImage =
+    "fields" in movie
+      ? movie.fields.poster_url || ""
+      : `https://image.tmdb.org/t/p/original${movie.backdrop_path}`
+
+  const movieTitle = "fields" in movie ? movie.fields.movie_name : movie.title
+
+  // Para lograr el efecto de animación al cambiar la imagen
+  const [image, setImage] = useState(backgroundImage)
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setImage(movie.backdrop_path)
+      setImage(backgroundImage)
     }, 100)
     return () => clearTimeout(timeout)
-  }, [movie])
+  }, [backgroundImage])
 
   const handleMovieAdded = () => {
     setRefreshTrigger((prev) => prev + 1)
@@ -41,12 +61,12 @@ export default function Hero({ movie, refreshTrigger, setRefreshTrigger, toggleB
           
           {/* Imagen de fondo animada */}
           <motion.div
-            key={image} // NO BORRAR / Forzamos para que la imagen cambie con animación cuando ya esta seleccionada
+            key={image} // NO BORRAR / Forzamos para que la imagen cambie con animación cuando ya está seleccionada
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 1, ease: "easeInOut" }}
             className="absolute inset-0 bg-cover bg-center"
-            style={{ backgroundImage: `url(https://image.tmdb.org/t/p/original${image})` }}
+            style={{ backgroundImage: `url(${image})` }}
           />
 
           {/* Gradiente superior para fondo */}
@@ -72,7 +92,7 @@ export default function Hero({ movie, refreshTrigger, setRefreshTrigger, toggleB
               transition={{ duration: 1, ease: "easeInOut" }}
               className="text-[120px] font-bold tracking-widest text-primary leading-none font-bebas-neue"
             >
-              {movie.title}
+              {movieTitle}
             </motion.h1>
           </div>
 
