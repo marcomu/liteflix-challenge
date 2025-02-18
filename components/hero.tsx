@@ -183,7 +183,7 @@ export default function Hero({ movie, refreshTrigger, setRefreshTrigger }: HeroP
               disabled={isAdding}
             >
               <Plus className="w-4 h-4" />
-              <span className="leading-[0]">+ MI LISTA</span>
+              <span className="leading-[0]">MI LISTA</span>
               {isAdding && <span className="ml-2 text-sm">{addProgress}%</span>}
             </button>
           </motion.div>

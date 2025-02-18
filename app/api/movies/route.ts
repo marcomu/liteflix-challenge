@@ -9,7 +9,7 @@ const CLOUDINARY_NAME = process.env.CLOUDINARY_NAME
 export async function GET(request: Request) {
   try {
     const response = await fetch(
-      "https://api.airtable.com/v0/appY99gCjWwLEzoqg/tblzYrH4Egd77HgP7?sort[0][field]=createdTime&sort[0][direction]=asc",
+      "https://api.airtable.com/v0/appY99gCjWwLEzoqg/tblzYrH4Egd77HgP7?sort[0][field]=createdTime&sort[0][direction]=desc",
       {
         method: "GET",
         headers: {
