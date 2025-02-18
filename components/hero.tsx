@@ -6,7 +6,7 @@ import { Play, Plus } from "lucide-react"
 import AddMovieModal from "./AddMovieModal"
 import type React from "react"
 
-// Se definen dos interfaces para soportar ambos tipos de movie
+// Definición de interfaces para soportar ambos formatos de movie
 interface TMDBMovie {
   title: string
   backdrop_path: string
@@ -59,12 +59,12 @@ export default function Hero({ movie, refreshTrigger, setRefreshTrigger, toggleB
       <div className="relative h-screen" ref={contentRef}>
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="h-full relative">
           
-          {/* Imagen de fondo animada */}
+          {/* Imagen de fondo animada con zoom in/out */}
           <motion.div
-            key={image} // NO BORRAR / Forzamos para que la imagen cambie con animación cuando ya está seleccionada
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, ease: "easeInOut" }}
+            key={image} // Forzamos reanimación cuando la imagen cambia
+            initial={{ opacity: 0, scale: 1.2 }} // Inicia con un breve zoom in
+            animate={{ opacity: 1, scale: 1 }}      // Se aleja a escala normal
+            transition={{ duration: 3, ease: "easeInOut" }} // Animación de 3 segundos
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${image})` }}
           />
@@ -74,21 +74,23 @@ export default function Hero({ movie, refreshTrigger, setRefreshTrigger, toggleB
 
           {/* Contenido */}
           <div className="absolute bottom-64 left-16 z-10 transition-all duration-300">
-            {/* ORIGINAL DE LITEFLIX - Aparece desde arriba */}
+            {/* ORIGINAL DE NETFLIX - Aparece desde arriba hacia abajo con ease */}
             <motion.p
+              key={movieTitle + "-original"} //  Clave para reanimar cada cambio de película
               initial={{ y: -50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }} 
+              animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, ease: "easeInOut" }}
               className="text-xl tracking-[.25em] mb-2 font-bebas-neue leading-none"
             >
               <span className="font-book">ORIGINAL DE </span>
-              <span className="font-bold">LITEFLIX</span>
+              <span className="font-bold">NETFLIX</span> {/* Cambiado a NETFLIX */}
             </motion.p>
 
-            {/* TÍTULO DE LA PELÍCULA - Aparece desde abajo */}
+            {/* TÍTULO DE LA PELÍCULA - Aparece desde abajo hacia arriba */}
             <motion.h1
+              key={movieTitle + "-title"} // Clave para reanimar cada cambio de película
               initial={{ y: 50, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }} 
+              animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1, ease: "easeInOut" }}
               className="text-[120px] font-bold tracking-widest text-primary leading-none font-bebas-neue"
             >
