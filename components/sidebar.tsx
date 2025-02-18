@@ -7,130 +7,134 @@ import Select, { components } from "react-select"
 
 // Nueva interfaz para las películas de Airtable
 interface AirtableMovie {
-  id: string
+  id: string;
   fields: {
-    movie_name: string
-    poster_url?: string
-  }
+    movie_name: string;
+    poster_url?: string;
+  };
 }
 
 interface TMDBMovie {
-  id: number
-  title: string
-  backdrop_path: string
-  poster_path: string
+  id: number;
+  title: string;
+  backdrop_path: string;
+  poster_path: string;
 }
 
+type MovieType = TMDBMovie | AirtableMovie;
+
 interface SidebarProps {
-  popularMovies: TMDBMovie[]
-  topRatedMovies: TMDBMovie[]
-  upcomingMovies: TMDBMovie[]
-  onMovieSelect: (movie: TMDBMovie | AirtableMovie) => void
+  popularMovies: TMDBMovie[];
+  topRatedMovies: TMDBMovie[];
+  upcomingMovies: TMDBMovie[];
+  onMovieSelect: (movie: MovieType) => void;
 }
 
 export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies, onMovieSelect }: SidebarProps) {
-  const [category, setCategory] = useState<"popular" | "top_rated" | "upcoming" | "mymovies">("popular")
-  const [selectedOption, setSelectedOption] = useState<{ label: string; value: "popular" | "top_rated" | "upcoming" | "mymovies" } | null>(null)
+  const [category, setCategory] = useState<"popular" | "top_rated" | "upcoming" | "mymovies">("popular");
+  const [selectedOption, setSelectedOption] = useState<{ label: string; value: "popular" | "top_rated" | "upcoming" | "mymovies" } | null>(null);
 
   const movies = {
     popular: popularMovies,
     top_rated: topRatedMovies,
-    upcoming: upcomingMovies
-  }
+    upcoming: upcomingMovies,
+  };
 
-  const options: { label: string; value: "popular" | "top_rated" | "upcoming" | "mymovies"}[] = [
+  const options: { label: string; value: "popular" | "top_rated" | "upcoming" | "mymovies" }[] = [
     { label: "Populares", value: "popular" },
     { label: "Top", value: "top_rated" },
     { label: "Upcoming", value: "upcoming" },
-    { label: "Mis Películas", value: "mymovies" }
-  ]
+    { label: "Mis Películas", value: "mymovies" },
+  ];
 
   // Estados para "Mis Películas" (datos de Airtable)
-  const [myMovies, setMyMovies] = useState<AirtableMovie[]>([])
-  const [isLoadingMyMovies, setIsLoadingMyMovies] = useState(false)
+  const [myMovies, setMyMovies] = useState<AirtableMovie[]>([]);
+  const [isLoadingMyMovies, setIsLoadingMyMovies] = useState(false);
 
   // Función para obtener "Mis Películas" desde Airtable (API)
   const fetchMyMovies = useCallback(async () => {
-    setIsLoadingMyMovies(true)
+    setIsLoadingMyMovies(true);
     try {
-      const response = await fetch("/api/movies")
+      const response = await fetch("/api/movies");
       if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-      const data = await response.json()
-      setMyMovies(data.records || [])
+      const data = await response.json();
+      setMyMovies(data.records || []);
     } catch (error) {
-      console.error("Error fetching my movies:", error)
-      setMyMovies([])
+      console.error("Error fetching my movies:", error);
+      setMyMovies([]);
     } finally {
-      setIsLoadingMyMovies(false)
+      setIsLoadingMyMovies(false);
     }
-  }, [])
+  }, []);
 
-  // useEffect para cargar "Mis Películas" al seleccionar esa categoría
+  // Cargar "Mis Películas" al seleccionar esa categoría
   useEffect(() => {
     if (category === "mymovies") {
-      fetchMyMovies()
+      fetchMyMovies();
     }
-  }, [category, fetchMyMovies])
+  }, [category, fetchMyMovies]);
 
-  // Definir qué películas mostrar y el estado de carga según la categoría
-  const displayMovies = category === "mymovies" ? myMovies : movies[category]
-  const loading = category === "mymovies" ? isLoadingMyMovies : false
+  const displayMovies = category === "mymovies" ? myMovies : movies[category];
+  const loading = category === "mymovies" ? isLoadingMyMovies : false;
 
-  const CustomMenu = (props: any) => {
-    return (
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -10 }}
-        transition={{
-          type: "spring",
-          stiffness: 200,
-          damping: 15,
-        }}
-        className="absolute z-50 w-full bg-transparent rounded-lg p-2"
-      >
-        <components.Menu {...props}>{props.children}</components.Menu>
-      </motion.div>
-    )
-  }
+  const CustomMenu = (props: any) => (
+    <motion.div
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -10 }}
+      transition={{ type: "spring", stiffness: 200, damping: 15 }}
+      className="absolute z-50 w-full bg-transparent rounded-lg p-2"
+    >
+      <components.Menu {...props}>{props.children}</components.Menu>
+    </motion.div>
+  );
 
   // Componente interno para cada movie card
-  const MovieCard = ({ movie }: { movie: any }) => {
-    const [hovered, setHovered] = useState(false)
+  const MovieCard = ({ movie }: { movie: MovieType }) => {
+    const [hovered, setHovered] = useState(false);
     return (
       <motion.div
-        key={movie.id}
         className="relative group cursor-pointer py-3"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         onClick={() => onMovieSelect(movie)}
       >
         <div className="relative aspect-video bg-gray-800 rounded-lg overflow-hidden">
-          {/* Imagen de la película */}
+          {/* Imagen */}
           <img
             src={
               category === "mymovies"
-                ? movie.fields.poster_url || "/placeholder.svg?height=169&width=300"
-                : `https://image.tmdb.org/t/p/w500${movie.poster_path}`
+                ? "fields" in movie
+                  ? movie.fields.poster_url || "/placeholder.svg?height=169&width=300"
+                  : ""
+                : `https://image.tmdb.org/t/p/w500${(movie as TMDBMovie).poster_path}`
             }
-            alt={category === "mymovies" ? movie.fields.movie_name : movie.title}
+            alt={
+              category === "mymovies"
+                ? "fields" in movie
+                  ? movie.fields.movie_name
+                  : ""
+                : (movie as TMDBMovie).title
+            }
             className="w-full h-full object-cover transition-opacity duration-300 ease-in-out"
             loading="lazy"
           />
           <div className="absolute inset-0 bg-black bg-opacity-40"></div>
 
-          {/* Grupo de icono de play y título */}
+          {/* Grupo de Play y Título */}
           <motion.div
             animate={{
               flexDirection: hovered ? "row" : "column",
-              scale: hovered ? 0.9 : 1,
+              scale: hovered ? 0.8 : 1,
             }}
             transition={{ duration: 0.3 }}
-            className={`absolute bottom-7 left-0 right-0 ${
-              hovered ? "flex flex-row items-center justify-center gap-2" : "flex flex-col items-center justify-center gap-1"
-            } text-center`}
+            className={`absolute bottom-8 left-0 right-0 transition-all duration-300 ${
+              hovered
+                ? "flex flex-row items-center justify-center gap-2"
+                : "grid grid-rows-2 gap-1 text-center"
+            }`}
           >
             <CirclePlay
               size={38}
@@ -139,19 +143,19 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
               className="text-white group-hover:text-primary transition-colors duration-300"
             />
             <h3 className="text-md font-regular text-white font-bebas-neue tracking-widest leading-tight">
-            {
-              category === "mymovies"
-                ? (movie.fields.movie_name.length > 15 
-                    ? movie.fields.movie_name.slice(0, 15) + "..." 
-                    : movie.fields.movie_name)
-                : (movie.title.length > 15 
-                    ? movie.title.slice(0, 15) + "..." 
-                    : movie.title)
-            }
+              {category === "mymovies"
+                ? "fields" in movie
+                  ? movie.fields.movie_name.length > 15
+                    ? movie.fields.movie_name.slice(0, 15) + "..."
+                    : movie.fields.movie_name
+                  : ""
+                : (movie as TMDBMovie).title.length > 15
+                ? (movie as TMDBMovie).title.slice(0, 15) + "..."
+                : (movie as TMDBMovie).title}
             </h3>
           </motion.div>
 
-          {/* Elemento de rating (estrella + 5.0) en la esquina inferior izquierda */}
+          {/* Rating */}
           <div className="absolute bottom-2 left-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <div className="flex items-center">
               <Star className="w-4 h-4 fill-[#64eebc] text-[#64eebc]" />
@@ -159,14 +163,14 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
             </div>
           </div>
 
-          {/* Elemento de año en la esquina inferior derecha */}
+          {/* Año */}
           <div className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <span className="text-white text-sm">2020</span>
           </div>
         </div>
       </motion.div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="fixed top-28 right-10 w-64 h-[690px] bg-transparent font-bebas-neue font-medium rounded-lg z-50">
@@ -176,8 +180,8 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
           options={options}
           value={selectedOption}
           onChange={(selected: { label: string; value: "popular" | "top_rated" | "upcoming" | "mymovies" } | null) => {
-            setSelectedOption(selected)
-            setCategory(selected?.value || "popular")
+            setSelectedOption(selected);
+            setCategory(selected?.value || "popular");
           }}
           placeholder="Escoge una opción"
           getOptionLabel={(e) => e.label}
@@ -298,5 +302,5 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
         )}
       </div>
     </div>
-  )
+  );
 }
