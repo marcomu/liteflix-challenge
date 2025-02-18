@@ -14,6 +14,7 @@ interface AddMovieModalProps {
 
 export default function AddMovieModal({ isOpen, onClose, onMovieAdded }: AddMovieModalProps) {
   const [title, setTitle] = useState("")
+  const [submittedTitle, setSubmittedTitle] = useState("") // Estado para guardar el título enviado
   const [image, setImage] = useState<File | null>(null)
   const [isUploading, setIsUploading] = useState(false)
   const [uploadProgress, setUploadProgress] = useState(0)
@@ -41,10 +42,20 @@ export default function AddMovieModal({ isOpen, onClose, onMovieAdded }: AddMovi
         setShowSuccessMessage(true)
         setTimeout(() => {
           onMovieAdded && onMovieAdded()
-          onClose()
+          setTitle("")
+          setImage(null)
+          setIsUploading(false)
         }, 2000)
       }
     }, 30)
+  }
+
+  const closeModal = () => {
+    onClose()
+    setShowSuccessMessage(false) 
+    setIsUploading(false)
+    setTitle("")
+    setImage(null)
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -61,6 +72,8 @@ export default function AddMovieModal({ isOpen, onClose, onMovieAdded }: AddMovi
       return
     }
 
+    // Guardo el título ingresado antes de limpiarlo
+    setSubmittedTitle(title)
     setIsUploading(true)
     simulateProgress()
 
@@ -80,8 +93,7 @@ export default function AddMovieModal({ isOpen, onClose, onMovieAdded }: AddMovi
         throw new Error(result.error || "Error al agregar la película")
       }
 
-      setTitle("")
-      setImage(null)
+      
     } catch (err) {
       console.error("Error al agregar película:", err)
       setError(err instanceof Error ? err.message : "Ocurrió un error desconocido al agregar la película")
@@ -91,27 +103,23 @@ export default function AddMovieModal({ isOpen, onClose, onMovieAdded }: AddMovi
 
   const LoadingState = () => (
     <div className="space-y-8">
-      <p className="text-white font-bebas-neue text-xl">CARGANDO {uploadProgress}%</p>
-      <div className="w-full h-1 bg-[#d8d8d8] rounded-full overflow-hidden">
+      <p className="text-white font-bebas-neue text-xl">{uploadProgress}% CARGADO</p>
+      <div className="w-full h-2 bg-[#d8d8d8] overflow-hidden">
         <motion.div
           className="h-full bg-[#64eebc]"
           initial={{ width: "0%" }}
           animate={{ width: `${uploadProgress}%` }}
-          transition={{ duration: 0.3 }}
+          transition={{ ease: "linear", duration: 0.5 }}
         />
-      </div>
-      <div className="text-center space-y-8">
-        <p className="text-white font-bebas-neue text-2xl mt-16">LITEFLIX THE MOVIE</p>
-        <button onClick={onClose} className="text-white font-bebas-neue hover:text-[#64eebc] transition-colors">
-          CANCELAR
-        </button>
       </div>
     </div>
   )
 
   const SuccessMessage = () => (
-    <div className="text-center space-y-4">
-      <p className="text-[#64eebc] font-bebas-neue text-2xl">¡PELÍCULA AGREGADA CON ÉXITO!</p>
+    <div className="text-center text-white font-bebas-neue text-xl tracking-widest mb-4">
+      <p>¡Felicitaciones!</p>
+      <p> <span className="font-bold">{submittedTitle}</span> fue correctamente subida.</p>
+      <button onClick={closeModal} className="bg-white text-black px-[80px] py-3 mt-14">Ir a home</button>
     </div>
   )
 
@@ -129,45 +137,54 @@ export default function AddMovieModal({ isOpen, onClose, onMovieAdded }: AddMovi
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="bg-[#242424] p-8 rounded-lg w-full max-w-lg"
+            className="bg-[#242424] p-8 rounded-lg w-full max-w-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex justify-between items-center mb-8">
-              <h2 className="text-[#64eebc] text-2xl font-bold font-bebas-neue">AGREGAR PELÍCULA</h2>
+            <div className="flex justify-self-end">
               <button
-                onClick={onClose}
+                onClick={closeModal}
                 className="text-white hover:text-[#64eebc] transition-colors"
                 aria-label="Cerrar modal"
               >
                 <X size={24} />
               </button>
             </div>
+            <h2 className="text-[#64eebc] text-2xl font-bold font-bebas-neue text-center mb-8 tracking-widest">
+              AGREGAR PELÍCULA
+            </h2>
 
             {showSuccessMessage ? (
               <SuccessMessage />
             ) : isUploading ? (
+              <>
               <LoadingState />
+              <div className="mb-4 grid content-center justify-items-center justify-center items-center mt-8">
+                <input
+                  type="text"
+                  id="title"
+                  value={title}
+                  placeholder="Título"
+                  onChange={(e) => setTitle(e.target.value)}
+                  className="font-bebas-neue text-center placeholder:font-bebas-neue placeholder:text-center placeholder:text-white placeholder:text-lg placeholder:tracking-widest w-full bg-transparent border-b border-gray text-white p-2 focus:outline-none focus:border-[#64eebc]"
+                  required
+                />
+                {error && <p className="text-red-500 mb-4 font-bebas-neue">{error}</p>}
+                <button
+                  type="submit"
+                  className="w-full bg-[#d8d8d8] text-black py-3 hover:bg-opacity-90 transition-opacity mt-10 tracking-widest font-book font-bebas-neue"
+                  disabled={isUploading}
+                >
+                  SUBIR PELÍCULA
+                </button>
+              </div>
+            </>
             ) : (
               <form onSubmit={handleSubmit}>
+                {/* Poster */}
                 <div className="mb-8">
-                  <label htmlFor="title" className="block text-white text-sm mb-2 font-bebas-neue">
-                    TÍTULO
-                  </label>
-                  <input
-                    type="text"
-                    id="title"
-                    value={title}
-                    onChange={(e) => setTitle(e.target.value)}
-                    className="w-full bg-transparent border-b border-white text-white p-2 focus:outline-none focus:border-[#64eebc]"
-                    required
-                  />
-                </div>
-
-                <div className="mb-8">
-                  <label className="block text-white text-sm mb-2 font-bebas-neue">POSTER</label>
                   <div
                     {...getRootProps()}
-                    className={`border-2 border-dashed border-white rounded-lg p-4 text-center cursor-pointer ${
+                    className={`border-2 border-dashed border-white rounded-lg p-4 text-center grid content-center justify-items-center cursor-pointer h-[100px] ${
                       isDragActive ? "border-[#64eebc]" : ""
                     }`}
                   >
@@ -177,25 +194,37 @@ export default function AddMovieModal({ isOpen, onClose, onMovieAdded }: AddMovi
                     ) : isDragActive ? (
                       <p className="text-[#64eebc] font-bebas-neue">SUELTA LA IMAGEN AQUÍ ...</p>
                     ) : (
-                      <div className="text-white">
-                        <ImageIcon className="mx-auto mb-2" />
-                        <p className="font-bebas-neue">
-                          ARRASTRA Y SUELTA UNA IMAGEN AQUÍ, O HAZ CLICK PARA SELECCIONAR
+                      <div className="text-white flex items-center">
+                        <ImageIcon />
+                        <p className="font-bebas-neue tracking-widest mt-1 mx-4 ">
+                          <span className="font-bold">Agregá un archivo</span> o arrastralo y soltalo aquí
                         </p>
                       </div>
                     )}
                   </div>
                 </div>
 
-                {error && <p className="text-red-500 mb-4 font-bebas-neue">{error}</p>}
+                {/* Título */}
+                <div className="mb-4 grid content-center justify-items-center justify-center items-center">
+                  <input
+                    type="text"
+                    id="title"
+                    value={title}
+                    placeholder="Título"
+                    onChange={(e) => setTitle(e.target.value)}
+                    className="font-bebas-neue text-center placeholder:font-bebas-neue placeholder:text-center placeholder:text-white placeholder:text-lg placeholder:tracking-widest w-full bg-transparent border-b border-gray text-white p-2 focus:outline-none focus:border-[#64eebc]"
+                    required
+                  />
+                  {error && <p className="text-red-500 mb-4 font-bebas-neue">{error}</p>}
 
-                <button
-                  type="submit"
-                  className="w-full bg-[#d8d8d8] text-black py-3 rounded hover:bg-opacity-90 transition-opacity flex items-center justify-center font-bebas-neue"
-                  disabled={isUploading}
-                >
-                  SUBIR PELÍCULA
-                </button>
+                  <button
+                    type="submit"
+                    className="w-full bg-[#d8d8d8] text-black py-3 hover:bg-opacity-90 transition-opacity mt-10 tracking-widest font-book font-bebas-neue"
+                    disabled={isUploading}
+                  >
+                    SUBIR PELÍCULA
+                  </button>
+                </div>
               </form>
             )}
           </motion.div>
@@ -204,4 +233,3 @@ export default function AddMovieModal({ isOpen, onClose, onMovieAdded }: AddMovi
     </AnimatePresence>
   )
 }
-
