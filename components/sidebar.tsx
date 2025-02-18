@@ -97,135 +97,135 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
   }
 
   return (
-    <div className="fixed top-28 right-10 w-64 h-[80vh] bg-black bg-opacity-0 rounded-lg overflow-y-auto p-6 font-bebas-neue z-50">
-      
-      {/* Select Dropdown con el nuevo CustomMenu */}
-      <div className="mb-4">
-        <Select
-          options={options}
-          value={selectedOption}
-          onChange={(selected: { label: string; value: "popular" | "top_rated" | "upcoming" | "mymovies" } | null) => {
-            setSelectedOption(selected)
-            setCategory(selected?.value || "popular")
-          }}
-          placeholder="Escoge una opción"
-          getOptionLabel={(e) => e.label}
-          formatOptionLabel={(data, { context }) =>
-            context === "menu" ? (
-              <div className="flex justify-between items-center w-full">
-                <span className="font-book tracking-[0.3em]">{data.label}</span>
-                {selectedOption?.value === data.value && <Check className="w-5 h-5 text-white" />}
-              </div>
-            ) : (
-              <span className="text-lg font-bold">
-                <span className="font-bebas-neue font-medium">Ver: </span>
-                {data.label}
-              </span>
-            )
-          }
-          className="text-white tracking-[0.2em] flex justify-center items-center"
-          menuPortalTarget={document.body}
-          menuPosition="absolute"
-          components={{
-            Menu: CustomMenu
-          }}
-          styles={{
-            control: (base) => ({
-              ...base,
-              backgroundColor: "transparent",
-              color: "white",
-              border: "none",
-              boxShadow: "none",
-              display: "flex",
-              alignItems: "center",
-              padding: "4px 8px",
-              width: "100%",
-              cursor: "pointer"
-            }),
-            menu: (base) => ({
-              ...base,
-              backgroundColor: "#242424",
-              borderRadius: "0px",
-              border: "none",
-              color: "white",
-              padding: "10px 20px",
-              position: "absolute",
-              width: "241px",
-              "::before": {
-                backgroundColor:"transparent",
-                content: '""',
+    <div className="fixed top-28 right-10 w-64 h-[690px] bg-transparent font-bebas-neue font-medium rounded-lg z-50">
+      {/* Encabezado fijo */}
+      <div>
+        <div className="sticky top-0 bg-transparent z-10 mb-4">
+          <Select
+            options={options}
+            value={selectedOption}
+            onChange={(selected: { label: string; value: "popular" | "top_rated" | "upcoming" | "mymovies" } | null) => {
+              setSelectedOption(selected)
+              setCategory(selected?.value || "popular")
+            }}
+            placeholder="Escoge una opción"
+            getOptionLabel={(e) => e.label}
+            formatOptionLabel={(data, { context }) =>
+              context === "menu" ? (
+                <div className="flex justify-between items-center w-full">
+                  <span className="font-book tracking-[0.3em]">{data.label}</span>
+                  {selectedOption?.value === data.value && <Check className="w-5 h-5 text-white" />}
+                </div>
+              ) : (
+                <span className="text-lg font-bold">
+                  <span className="font-bebas-neue font-medium">Ver: </span>
+                  {data.label}
+                </span>
+              )
+            }
+            className="text-white tracking-[0.2em] flex justify-center items-center"
+            menuPortalTarget={document.body}
+            menuPosition="absolute"
+            components={{
+              Menu: CustomMenu
+            }}
+            styles={{
+              control: (base) => ({
+                ...base,
+                backgroundColor: "transparent",
+                color: "white",
+                border: "none",
+                boxShadow: "none",
+                display: "flex",
+                alignItems: "center",
+                padding: "4px 8px",
+                width: "100%",
+                cursor: "pointer"
+              }),
+              menu: (base) => ({
+                ...base,
+                backgroundColor: "#242424",
+                borderRadius: "0px",
+                border: "none",
+                color: "white",
+                padding: "10px 20px",
                 position: "absolute",
-                top: "-10px",
-                right: "28px",
-                transform: "translateX(-50%)",
-                width: "0",
-                height: "0",
-                borderLeft: "10px solid transparent",
-                borderRight: "10px solid transparent",
-                borderBottom: "10px solid #242424",
-              },
-            }),
-            menuPortal: (base) => ({
-              ...base,
-              zIndex: 99999,
-            }),
-            option: (base, state) => ({
-              ...base,
-              backgroundColor: "transparent",
-              color: "white",
-              cursor: "pointer",
-              width: "100%",
-              fontFamily: "Bebas Neue",
-              fontWeight: state.isFocused ? "700" : "400",
-            }),
-            singleValue: (base) => ({
-              ...base,
-              color: "white",
-            }),
-            placeholder: (base) => ({
-              ...base,
-              color: "white",
-            }),
-            dropdownIndicator: (base) => ({
-              ...base,
-              padding: "0",
-              marginLeft: "-14px",
-              color: "white",
-              ":hover": { color: "white" },
-              ":focus": { color: "white" },
-              ":active": { color: "white" },
-            }),
-            indicatorSeparator: () => ({
-              display: "none",
-            }),
-            indicatorsContainer: (base) => ({
-              ...base,
-              color: "white",
-              ":hover": { color: "white" },
-              ":focus": { color: "white" },
-              ":active": { color: "white" },
-            }),
-          }}
-        />
+                width: "241px",
+                "::before": {
+                  backgroundColor:"transparent",
+                  content: '""',
+                  position: "absolute",
+                  top: "-10px",
+                  right: "28px",
+                  transform: "translateX(-50%)",
+                  width: "0",
+                  height: "0",
+                  borderLeft: "10px solid transparent",
+                  borderRight: "10px solid transparent",
+                  borderBottom: "10px solid #242424",
+                },
+              }),
+              menuPortal: (base) => ({
+                ...base,
+                zIndex: 99999,
+              }),
+              option: (base, state) => ({
+                ...base,
+                backgroundColor: "transparent",
+                color: "white",
+                cursor: "pointer",
+                width: "100%",
+                fontFamily: "Bebas Neue",
+                fontWeight: state.isFocused ? "700" : "400",
+              }),
+              singleValue: (base) => ({
+                ...base,
+                color: "white",
+              }),
+              placeholder: (base) => ({
+                ...base,
+                color: "white",
+              }),
+              dropdownIndicator: (base) => ({
+                ...base,
+                padding: "0",
+                marginLeft: "-14px",
+                color: "white",
+                ":hover": { color: "white" },
+                ":focus": { color: "white" },
+                ":active": { color: "white" },
+              }),
+              indicatorSeparator: () => ({
+                display: "none",
+              }),
+              indicatorsContainer: (base) => ({
+                ...base,
+                color: "white",
+                ":hover": { color: "white" },
+                ":focus": { color: "white" },
+                ":active": { color: "white" },
+              }),
+            }}
+          />
+        </div>
       </div>
-
-      {/* Lista de películas */}
-      <div className="space-y-6">
-        {loading ? ( // 🚀🛠️ Mostrar spinner si se están cargando "Mis Películas"
+      {/* Lista de películas scrollable */}
+      <div className="px-6 pb-6 overflow-y-auto" style={{ height: "calc(100% - 120px)" }}>
+        {loading ? ( // Mostrar spinner si se están cargando "Mis Películas"
           <div className="flex justify-center items-center h-32">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#64eebc]"></div>
           </div>
         ) : (
           <>
-            {displayMovies && displayMovies.length > 0 ? ( // 🚀🛠️ Usar displayMovies en función de la categoría seleccionada
+            {displayMovies && displayMovies.length > 0 ? ( // Usar displayMovies en función de la categoría seleccionada
               displayMovies.map((movie: any) => (
                 <motion.div
                   key={movie.id}
                   whileHover={{ scale: 1.05 }}
-                  className="relative group cursor-pointer"
+                  className="relative group cursor-pointer py-3"
                   onClick={() => onMovieSelect(movie)}
                 >
-                  {/* 🚀🛠️ Renderizado condicional para diferenciar datos de Airtable vs. TMDB */}
+                  {/* Renderizado condicional para diferenciar datos de Airtable vs. TMDB */}
                   <div className="relative aspect-video bg-gray-800 rounded-lg overflow-hidden flex items-end justify-center">
                     {/* Imagen de la película */}
                     <img
@@ -238,9 +238,7 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
                       className="w-full h-full object-cover transition-opacity duration-300 ease-in-out"
                       loading="lazy"
                     />
-
                     <div className="absolute inset-0 bg-black bg-opacity-40"></div>
-
                     {/* Ícono de Play siempre visible, cambia de color en hover */}
                     <motion.div
                       className="absolute inset-0 flex items-center justify-center"
@@ -248,8 +246,7 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
                     >
                       <Play className="w-12 h-12 text-white group-hover:text-primary transition-colors duration-300" />
                     </motion.div>
-
-                    {/* 🚀🛠️ Se modificó la clase para centrar el texto */}
+                    {/* Se modificó la clase para centrar el texto */}
                     <h3 className="absolute bottom-1 left-0 right-0 text-center text-md font-regular text-white font-bebas-neue tracking-widest leading-tight">
                       {category === "mymovies" ? movie.fields.movie_name : movie.title}
                     </h3>

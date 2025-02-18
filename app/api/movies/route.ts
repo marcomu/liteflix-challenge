@@ -4,17 +4,20 @@ const AIRTABLE_API_KEY = process.env.AIRTABLE_API_KEY
 const CLOUDINARY_NAME = process.env.CLOUDINARY_NAME
 
 /*
- * Método GET: Obtiene las películas desde Airtable.
+ * Método GET: Obtiene las películas desde Airtable ordenadas por fecha de creación (orden de inserción).
  */
 export async function GET(request: Request) {
   try {
-    const response = await fetch("https://api.airtable.com/v0/appY99gCjWwLEzoqg/tblzYrH4Egd77HgP7", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${AIRTABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-    })
+    const response = await fetch(
+      "https://api.airtable.com/v0/appY99gCjWwLEzoqg/tblzYrH4Egd77HgP7?sort[0][field]=createdTime&sort[0][direction]=asc",
+      {
+        method: "GET",
+        headers: {
+          Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+      }
+    )
 
     if (!response.ok) {
       const errorText = await response.text()
@@ -130,7 +133,7 @@ export async function POST(request: Request) {
 
       // Insertar registro en Airtable con el URL de Cloudinary
       const airtableResponse = await fetch(
-        `https://api.airtable.com/v0/appY99gCjWwLEzoqg/tblzYrH4Egd77HgP7`,
+        "https://api.airtable.com/v0/appY99gCjWwLEzoqg/tblzYrH4Egd77HgP7",
         {
           method: "POST",
           headers: {
