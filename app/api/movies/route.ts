@@ -29,16 +29,10 @@ export async function GET(request: Request) {
     return NextResponse.json(data)
   } catch (error) {
     console.error("Error al obtener películas de Airtable:", error)
-
-    // Verifica que `error` sea una instancia de Error antes de acceder a `.message`
-    const errorMessage = error instanceof Error ? error.message : "Error desconocido";
-
+    const errorMessage = error instanceof Error ? error.message : "Error desconocido"
     return NextResponse.json(
-    
       { error: "No se pudieron obtener las películas de Airtable", details: errorMessage },
-    
       { status: 500 },
-    
     )
   }
 }
@@ -48,76 +42,129 @@ export async function GET(request: Request) {
  */
 export async function POST(request: Request) {
   try {
-    // Extraer datos del formulario
-    const formData = await request.formData()
-    const movieName = formData.get("movie_name")
-    const poster = formData.get("poster")
+    const contentType = request.headers.get("content-type") || ""
+    let movieName, poster, poster_url
 
-    if (!movieName || !(poster instanceof File)) {
-      return NextResponse.json({ error: "El nombre de la película y un póster válido son requeridos" }, { status: 400 })
-    }
+    if (contentType.includes("application/json")) {
+      // Procesamos el JSON directamente
+      const data = await request.json()
+      movieName = data.movie_name
+      poster_url = data.poster_url
+      if (!movieName || !poster_url) {
+        return NextResponse.json(
+          { error: "El nombre de la película y el poster_url son requeridos" },
+          { status: 400 },
+        )
+      }
 
-    // Subir imagen a Cloudinary
-    const cloudinaryFormData = new FormData()
-    cloudinaryFormData.append("file", poster, poster.name)
-    cloudinaryFormData.append("upload_preset", "default")
-
-    const cloudinaryResponse = await fetch(`https://api.cloudinary.com/v1_1/${CLOUDINARY_NAME}/image/upload`, {
-      method: "POST",
-      body: cloudinaryFormData,
-    })
-
-    if (!cloudinaryResponse.ok) {
-      const errorText = await cloudinaryResponse.text()
-      console.error("Error al subir la imagen a Cloudinary:", errorText)
-      return NextResponse.json(
-        { error: "Error al subir la imagen a Cloudinary", details: errorText },
-        { status: cloudinaryResponse.status },
-      )
-    }
-
-    const cloudinaryData = await cloudinaryResponse.json()
-    const uploadedImageUrl = cloudinaryData.secure_url
-    if (!uploadedImageUrl) {
-      throw new Error("No se pudo obtener la URL de la imagen subida a Cloudinary")
-    }
-
-    // Insertar registro en Airtable
-    const airtableResponse = await fetch(`https://api.airtable.com/v0/appY99gCjWwLEzoqg/tblzYrH4Egd77HgP7`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${AIRTABLE_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        fields: {
-          movie_name: movieName,
-          poster_url: uploadedImageUrl,
+      // Insertar registro en Airtable usando poster_url
+      const airtableResponse = await fetch(
+        `https://api.airtable.com/v0/appY99gCjWwLEzoqg/tblzYrH4Egd77HgP7`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fields: {
+              movie_name: movieName,
+              poster_url: poster_url,
+            },
+          }),
         },
-      }),
-    })
-
-    if (!airtableResponse.ok) {
-      const errorText = await airtableResponse.text()
-      console.error("Error al insertar el registro en Airtable:", errorText)
-
-      return NextResponse.json(
-        { error: "Error al insertar el registro en Airtable", details: errorText },
-        { status: airtableResponse.status },
       )
-    }
 
-    const data = await airtableResponse.json()
-    console.log("Nueva película agregada:", data)
-    return NextResponse.json(data)
+      if (!airtableResponse.ok) {
+        const errorText = await airtableResponse.text()
+        console.error("Error al insertar el registro en Airtable:", errorText)
+        return NextResponse.json(
+          { error: "Error al insertar el registro en Airtable", details: errorText },
+          { status: airtableResponse.status },
+        )
+      }
+
+      const airtableData = await airtableResponse.json()
+      console.log("Nueva película agregada:", airtableData)
+      return NextResponse.json(airtableData)
+    } else {
+      // Procesamos formData (flujo de Cloudinary)
+      const formData = await request.formData()
+      movieName = formData.get("movie_name")
+      poster = formData.get("poster")
+
+      if (!movieName || !(poster instanceof File)) {
+        return NextResponse.json(
+          { error: "El nombre de la película y un póster válido son requeridos" },
+          { status: 400 },
+        )
+      }
+
+      // Subir imagen a Cloudinary
+      const cloudinaryFormData = new FormData()
+      cloudinaryFormData.append("file", poster, poster.name)
+      cloudinaryFormData.append("upload_preset", "default")
+
+      const cloudinaryResponse = await fetch(
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_NAME}/image/upload`,
+        {
+          method: "POST",
+          body: cloudinaryFormData,
+        },
+      )
+
+      if (!cloudinaryResponse.ok) {
+        const errorText = await cloudinaryResponse.text()
+        console.error("Error al subir la imagen a Cloudinary:", errorText)
+        return NextResponse.json(
+          { error: "Error al subir la imagen a Cloudinary", details: errorText },
+          { status: cloudinaryResponse.status },
+        )
+      }
+
+      const cloudinaryData = await cloudinaryResponse.json()
+      const uploadedImageUrl = cloudinaryData.secure_url
+      if (!uploadedImageUrl) {
+        throw new Error("No se pudo obtener la URL de la imagen subida a Cloudinary")
+      }
+
+      // Insertar registro en Airtable con el URL de Cloudinary
+      const airtableResponse = await fetch(
+        `https://api.airtable.com/v0/appY99gCjWwLEzoqg/tblzYrH4Egd77HgP7`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${AIRTABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            fields: {
+              movie_name: movieName,
+              poster_url: uploadedImageUrl,
+            },
+          }),
+        },
+      )
+
+      if (!airtableResponse.ok) {
+        const errorText = await airtableResponse.text()
+        console.error("Error al insertar el registro en Airtable:", errorText)
+        return NextResponse.json(
+          { error: "Error al insertar el registro en Airtable", details: errorText },
+          { status: airtableResponse.status },
+        )
+      }
+
+      const airtableData = await airtableResponse.json()
+      console.log("Nueva película agregada:", airtableData)
+      return NextResponse.json(airtableData)
+    }
   } catch (error) {
     console.error("Error al agregar la película a Airtable:", error)
-    const errorMessage = error instanceof Error ? error.message : "Error desconocido";
-
+    const errorMessage = error instanceof Error ? error.message : "Error desconocido"
     return NextResponse.json(
       { error: "No se pudo agregar la película a Airtable", details: errorMessage },
       { status: 500 },
     )
   }
 }
-
