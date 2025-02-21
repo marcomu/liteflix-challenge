@@ -75,9 +75,9 @@ export default function HomePage() {
   }
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
+    <div className="relative min-h-screen overflow-x-hidden">
       <Header onMovieAdded={handleMovieAdded} />
-      <div className="flex h-full">
+      <div className="flex flex-col md:flex-row h-full">
         <div className="flex-grow">
           <Hero
             movie={selectedMovie || popularMovies.results[0]}
@@ -85,12 +85,14 @@ export default function HomePage() {
             setRefreshTrigger={setRefreshTrigger}
           />
         </div>
-        <Sidebar
-          popularMovies={popularMovies.results.slice(0, 4)}
-          topRatedMovies={topRatedMovies.results.slice(0, 4)}
-          upcomingMovies={upcomingMovies.results.slice(0, 4)}
-          onMovieSelect={(movie) => handleMovieSelect(movie)}
-        />
+        <div className="w-full md:w-auto">
+          <Sidebar
+            popularMovies={popularMovies.results.slice(0, 4)}
+            topRatedMovies={topRatedMovies.results.slice(0, 4)}
+            upcomingMovies={upcomingMovies.results.slice(0, 4)}
+            onMovieSelect={(movie) => handleMovieSelect(movie)}
+          />
+        </div>
       </div>
     </div>
   )

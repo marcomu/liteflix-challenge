@@ -209,7 +209,7 @@ export default function Hero({ movie, refreshTrigger, setRefreshTrigger }: HeroP
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ duration: 1 }}
-              className="text-3xl font-bold tracking-widest text-primary leading-none font-bebas-neue"
+              className="text-7xl font-bold tracking-widest text-primary leading-none font-bebas-neue"
             >
               {movieTitle}
             </motion.h1>
@@ -243,7 +243,7 @@ export default function Hero({ movie, refreshTrigger, setRefreshTrigger }: HeroP
             </div>
           )}
           {addSuccess && (
-            <div className="absolute bottom-32 left-16 text-[#64eebc] font-bebas-neue">
+            <div className="absolute bottom-10 left-16 text-[#64eebc] font-bebas-neue">
               ¡PELÍCULA AGREGADA!
             </div>
           )}

@@ -111,13 +111,6 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
                   : ""
                 : `https://image.tmdb.org/t/p/w500${(movie as TMDBMovie).poster_path}`
             }
-            alt={
-              category === "mymovies"
-                ? "fields" in movie
-                  ? movie.fields.movie_name
-                  : ""
-                : (movie as TMDBMovie).title
-            }
             className="w-full h-full object-cover transition-opacity duration-300 ease-in-out"
             loading="lazy"
           />
@@ -130,10 +123,10 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
               scale: hovered ? 0.8 : 1,
             }}
             transition={{ duration: 0.3 }}
-            className={`absolute transition-all duration-300 ${
+            className={`absolute inset-0 flex items-center justify-center transition-all duration-300 ${
               hovered
-                ? "flex-row flex items-center justify-center bottom-10 left-[-5px]"
-                : "grid-rows-2 gap-1 text-center flex items-center justify-center bottom-5 left-0 right-0"
+                ? "flex-row gap-2 text-lg"
+                : "flex-col gap-1 text-lg"
             }`}
           >
             <CirclePlay
@@ -142,7 +135,7 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
               style={{ fill: "#242424", fillOpacity: 0.5 }}
               className="text-white group-hover:text-primary transition-colors duration-300"
             />
-            <h3 className="text-md font-regular text-white font-bebas-neue tracking-widest leading-tight">
+            <h3 className="text-md font-regular text-white font-bebas-neue tracking-widest leading-tight text-center">
               {category === "mymovies"
                 ? "fields" in movie
                   ? movie.fields.movie_name.length > 15
@@ -173,9 +166,12 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
   };
 
   return (
-    <div className="fixed top-28 right-10 w-64 h-[690px] bg-transparent font-bebas-neue font-medium rounded-lg z-50">
+    <div className={`font-bebas-neue font-medium bg-transparent z-50
+      xs:w-full sm:w-full sm:min-h-[500px] sm:pb-20
+      md:fixed md:top-28 md:right-10 md:w-64 md:h-[690px] md:rounded-lg`}
+    >
       {/* Encabezado fijo */}
-      <div className="sticky top-0 bg-transparent z-10 mb-4">
+      <div className="sticky top-0 bg-transparent z-10 mb-4 text-center">
         <Select
           options={options}
           value={selectedOption}
@@ -192,9 +188,9 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
                 {selectedOption?.value === data.value && <Check className="w-5 h-5 text-white" />}
               </div>
             ) : (
-              <span className="text-lg font-bold">
-                <span className="font-bebas-neue font-medium">Ver: </span>
-                {data.label}
+              <span className="text-lg font-bold w-full flex justify-center xs:text-center sm:text-center">
+                <span className="font-bebas-neue font-medium xs:block sm:block md:inline">Ver: </span>
+                <span className="ml-1">{data.label}</span>
               </span>
             )
           }
@@ -213,7 +209,7 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
               boxShadow: "none",
               display: "flex",
               alignItems: "center",
-              padding: "4px 8px",
+              padding: "4px 28px",
               width: "100%",
               cursor: "pointer",
             }),
@@ -225,7 +221,12 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
               color: "white",
               padding: "10px 20px",
               position: "absolute",
-              width: "241px",
+              width: "100%", // Cambio principal: ahora usa width 100%
+              maxWidth: "100vw", // Asegura que no exceda el ancho de la ventana
+              '@media (min-width: 768px)': { // md breakpoint
+                width: "241px",
+                maxWidth: "241px"
+              },
               "::before": {
                 backgroundColor:"transparent",
                 content: '""',
@@ -284,7 +285,7 @@ export default function Sidebar({ popularMovies, topRatedMovies, upcomingMovies,
         />
       </div>
       {/* Lista de películas scrollable */}
-      <div className="px-6 pb-6 overflow-y-auto" style={{ height: "calc(100% - 120px)" }}>
+      <div className="px-6 pb-6 relative -top-5 overflow-y-auto max-h-[550px]">
         {loading ? (
           <div className="flex justify-center items-center h-32">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#64eebc]"></div>
