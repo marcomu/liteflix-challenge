@@ -138,55 +138,104 @@ export default function Hero({ movie, refreshTrigger, setRefreshTrigger }: HeroP
           />
           {/* Gradiente superior para fondo */}
           <div className="absolute inset-0 bg-gradient-to-t from-black to-transparent" />
-          {/* Contenido */}
-          <div className="absolute bottom-64 left-16 z-10 transition-all duration-300">
-            <motion.p
-              key={movieTitle + "-original"}
-              initial={{ y: -50, opacity: 0 }}
+
+          {/* Versión Desktop (visible en sm en adelante) */}
+          <div className="hidden sm:block">
+            {/* Contenido (texto y título) */}
+            <div className="absolute bottom-64 left-16 z-10 transition-all duration-300">
+              <motion.p
+                key={movieTitle + "-original"}
+                initial={{ y: -50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 1, ease: "easeInOut" }}
+                className="text-xl tracking-[.25em] mb-2 font-bebas-neue leading-none"
+              >
+                <span className="font-book">ORIGINAL DE </span>
+                <span className="font-bold">NETFLIX</span>
+              </motion.p>
+              <motion.h1
+                key={movieTitle + "-title"}
+                initial={{ y: 50, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ duration: 1, ease: "easeInOut" }}
+                className="text-[120px] font-bold tracking-widest text-primary leading-none font-bebas-neue"
+              >
+                {movieTitle}
+              </motion.h1>
+            </div>
+            {/* Botones de acción */}
+            <motion.div
+              initial={{ y: 50, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1, ease: "easeInOut" }}
+              transition={{ delay: 0.4, duration: 1, ease: "easeInOut" }}
+              className="absolute bottom-48 left-16 flex gap-4"
+            >
+              <button
+                type="button"
+                className="text-lg btn-primary flex items-center justify-center tracking-[.25em] gap-2 h-14 w-[248px] text-center font-bebas-neue"
+                aria-label="Reproducir"
+              >
+                <Play className="w-4 h-4" />
+                <span className="leading-[0]">REPRODUCIR</span>
+              </button>
+              <button
+                type="button"
+                className="text-lg btn-secondary flex items-center justify-center tracking-[.25em] h-14 w-[248px] gap-2 font-bebas-neue"
+                onClick={handleAddToList}
+                aria-label="Agregar a Mi Lista"
+                disabled={isAdding}
+              >
+                <Plus className="w-4 h-4" />
+                <span className="leading-[0]">MI LISTA</span>
+                {isAdding && <span className="ml-2 text-sm">{addProgress}%</span>}
+              </button>
+            </motion.div>
+          </div>
+
+          {/* Versión Mobile (solo en resoluciones sm y abajo) */}
+          <div className="sm:hidden absolute inset-0 flex flex-col justify-center items-center text-center p-4 z-10">
+            <motion.p
+              key={movieTitle + "-original-mobile"}
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ duration: 1 }}
               className="text-xl tracking-[.25em] mb-2 font-bebas-neue leading-none"
             >
               <span className="font-book">ORIGINAL DE </span>
               <span className="font-bold">NETFLIX</span>
             </motion.p>
             <motion.h1
-              key={movieTitle + "-title"}
-              initial={{ y: 50, opacity: 0 }}
+              key={movieTitle + "-title-mobile"}
+              initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 1, ease: "easeInOut" }}
-              className="text-[120px] font-bold tracking-widest text-primary leading-none font-bebas-neue"
+              transition={{ duration: 1 }}
+              className="text-3xl font-bold tracking-widest text-primary leading-none font-bebas-neue"
             >
               {movieTitle}
             </motion.h1>
+            <div className="w-full max-w-xs mt-8 space-y-4">
+              <button
+                type="button"
+                className="text-lg btn-primary flex items-center justify-center tracking-[.25em] gap-2 h-14 w-full text-center font-bebas-neue"
+                aria-label="Reproducir"
+              >
+                <Play className="w-4 h-4" />
+                <span className="leading-[0]">REPRODUCIR</span>
+              </button>
+              <button
+                type="button"
+                className="text-lg btn-secondary flex items-center justify-center tracking-[.25em] h-14 w-full gap-2 font-bebas-neue"
+                onClick={handleAddToList}
+                aria-label="Agregar a Mi Lista"
+                disabled={isAdding}
+              >
+                <Plus className="w-4 h-4" />
+                <span className="leading-[0]">MI LISTA</span>
+                {isAdding && <span className="ml-2 text-sm">{addProgress}%</span>}
+              </button>
+            </div>
           </div>
-          {/* Botones de acción */}
-          <motion.div
-            initial={{ y: 50, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ delay: 0.4, duration: 1, ease: "easeInOut" }}
-            className="absolute bottom-48 left-16 flex gap-4"
-          >
-            <button
-              type="button"
-              className="text-lg btn-primary flex items-center justify-center tracking-[.25em] gap-2 h-14 w-[248px] text-center font-bebas-neue"
-              aria-label="Reproducir"
-            >
-              <Play className="w-4 h-4" />
-              <span className="leading-[0]">REPRODUCIR</span>
-            </button>
-            <button
-              type="button"
-              className="text-lg btn-secondary flex items-center justify-center tracking-[.25em] h-14 w-[248px] gap-2 font-bebas-neue"
-              onClick={handleAddToList}
-              aria-label="Agregar a Mi Lista"
-              disabled={isAdding}
-            >
-              <Plus className="w-4 h-4" />
-              <span className="leading-[0]">MI LISTA</span>
-              {isAdding && <span className="ml-2 text-sm">{addProgress}%</span>}
-            </button>
-          </motion.div>
+
           {/* Mensajes opcionales */}
           {addError && (
             <div className="absolute bottom-32 left-16 text-red-500 font-bebas-neue">
@@ -200,6 +249,7 @@ export default function Hero({ movie, refreshTrigger, setRefreshTrigger }: HeroP
           )}
         </motion.div>
       </div>
+
       <AddMovieModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onMovieAdded={handleMovieAdded} />
     </>
   )
