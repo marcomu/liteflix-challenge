@@ -65,3 +65,23 @@
   }
 }
 
+@layer utilities {
+  .nav-link {
+    @apply hover:text-primary transition-colors duration-300;
+  }
+}
+
+/* Add smooth transitions for menu items */
+.menu-item {
+  @apply transition-all duration-300 ease-in-out;
+}
+
+/* Ensure proper z-index stacking */
+.menu-overlay {
+  @apply z-50;
+}
+
+.menu-content {
+  @apply z-[51];
+}
+
