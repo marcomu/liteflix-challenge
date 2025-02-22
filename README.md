@@ -11,6 +11,7 @@ Liteflix es una aplicación web moderna desarrollada con Next.js, diseñada para
 - [Instalación](#instalación)
 - [Configuración de Variables de Entorno](#configuración-de-variables-de-entorno)
 - [API](#api)
+- [Estructura de Airtable](#Estructura-de-Airtable)
 - [Desarrollo y Ejecución](#desarrollo-y-ejecución)
 - [Estructura del Proyecto](#estructura-del-proyecto)
 - [Contribuciones](#contribuciones)
@@ -140,6 +141,18 @@ La aplicación incluye varios endpoints que facilitan la integración con servic
 - **Proceso:**  
   - Se utiliza un endpoint específico para agregar o eliminar películas de la lista de favoritos.
   - La operación implica tanto la actualización en Airtable como la correcta gestión del contenido multimedia en Cloudinary.
+
+### Estructura de Airtable
+La integración con Airtable se configura de la siguiente manera:
+
+- **Base de Datos:** 
+Nombre de la Base: Liteflix (se obtiene el id desde la API)
+Nombre de la Tabla: Movies (se obtiene el id desde la API)
+Campos de la Tabla:
+movie_name: Almacena el nombre de la película.
+poster_url: Contiene la URL del póster de la película, generalmente gestionado a través de Cloudinary.
+createdTime: Registra la fecha y hora en que se creó el registro (campo automático de Airtable).
+Esta estructura permite gestionar de forma sencilla y eficiente tanto el catálogo de películas como la lista de favoritos de los usuarios.
 
 ## Desarrollo y Ejecución
 
