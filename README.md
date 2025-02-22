@@ -2,7 +2,7 @@
 
 Liteflix es una aplicación web moderna desarrollada con Next.js, diseñada para gestionar y mostrar contenido multimedia de forma ágil y escalable. La plataforma integra diversas APIs y servicios, como Airtable, Cloudinary y TMDB, para ofrecer una experiencia rica y dinámica tanto en la visualización de contenido como en la gestión de listas personales.
 
-- [Ver Demo en Vercel](https://liteflix-challenge-mu.vercel.app/) 
+- [Ver Demo en Vercel](https://v0-netfix-app-clone.vercel.app/)
 
 ## Tabla de Contenidos
 
